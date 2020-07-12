@@ -37,15 +37,23 @@ Logger.prototype.end = function() {
     this.write( "\n" )
 }
 
-Logger.prototype.fg = function() {
-    return this
-}
-
 function set_prototype( name, code ) {
     Logger.prototype[name] = function() {
         this.write( code )
         return this
     }
+}
+
+Logger.prototype.fg = function( color ) {
+
+    if ( color == "bright" || !( color in ansi_codes.fg ) ) {
+        return this
+    }
+
+    let name = `fg_${color}`
+    this[name]()
+
+    return this
 }
 
 Object.keys( ansi_codes.fg ).forEach( function( color ) {
@@ -68,6 +76,18 @@ Object.keys( ansi_codes.fg ).forEach( function( color ) {
 
 } )
 
+Logger.prototype.bg = function( color ) {
+
+    if ( color == "bright" || !( color in ansi_codes.bg ) ) {
+        return this
+    }
+
+    let name = `bg_${color}`
+    this[name]()
+
+    return this
+}
+
 Object.keys( ansi_codes.bg ).forEach( function( color ) {
 
     if ( color !== "bright" ) {
@@ -80,6 +100,39 @@ Object.keys( ansi_codes.bg ).forEach( function( color ) {
 
 } )
 
+Logger.prototype.modifier = function( options ) {
+    let default_options = {
+        bold: false,
+        dim: false,
+        italic: false,
+        underline: false,
+        inverse: false,
+        hidden: false,
+        strike: false,
+        frame: false,
+        encircle: false,
+        overline: false,
+    }
+
+    options = Object.assign( default_options, options )
+
+    let _this = this
+
+    Object.keys( options ).forEach( function( mod ) {
+
+        if ( !( mod in default_options ) ) {
+            return
+        }
+
+        if ( !!options[mod] ) {
+            _this[mod]()
+        }
+
+    } )
+
+    return this
+}
+
 Object.keys( ansi_codes.modifier ).forEach( function( mod ) {
     let name = `mod_${mod}`
     set_prototype( name, ansi_codes.modifier[mod] )
@@ -88,7 +141,60 @@ Object.keys( ansi_codes.modifier ).forEach( function( mod ) {
     }
 } )
 
-set_prototype( `reset`, ansi_codes.reset.all )
+Logger.prototype.reset = function( options = {} ) {
+
+    if ( typeof options === "string" ) {
+
+        if ( !( options in ansi_codes.reset ) ) {
+            options = {}
+        } else {
+            this[`reset_${options}`]()
+            return this
+        }
+
+    }
+
+    if ( Object.keys( options ).length === 0 ) {
+        this.write( ansi_codes.reset.all )
+        return this
+    }
+
+
+    let default_options = {
+        all: false,
+        bold: false,
+        dim: false,
+        italic: false,
+        underline: false,
+        inverse: false,
+        hidden: false,
+        strike: false,
+        fg: false,
+        bg: false,
+        frame: false,
+        encircle: false,
+        overline: false,
+    }
+
+    options = Object.assign( default_options, options )
+
+    let _this = this
+
+    Object.keys( options ).forEach( function( option ) {
+
+        if ( !( option in default_options ) ) {
+            return
+        }
+
+        if ( !!options[option] ) {
+            _this[`reset_${option}`]()
+        }
+
+
+    } )
+
+    return this
+}
 
 Object.keys( ansi_codes.reset ).forEach( function( reset ) {
     set_prototype( `reset_${reset}`, ansi_codes.reset[reset] )

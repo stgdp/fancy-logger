@@ -1,7 +1,10 @@
 {
   "name": "@stgdp/fancy-logger",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "license": "MIT",
+  "homepage": "https://github.com/stgdp/fancy-logger",
+  "author": "Andrew Palfrey (https://github.com/apalfrey)",
   "repository": {
     "type": "git",
     "url": "https://github.com/stgdp/fancy-logger.git"
@@ -9,7 +12,15 @@
   "bugs": {
     "url": "https://github.com/stgdp/fancy-logger/issues"
   },
-  "homepage": "https://github.com/stgdp/fancy-logger",
-  "author": "",
-  "license": "MIT"
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@stgdp/ansi-codes": "1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  }
 }

@@ -30,7 +30,7 @@ function captureStream( stream ) {
     }
 
     return {
-        unhook: function unhook() {
+        unhook: function () {
             stream.write = originalWrite
         },
         reset: function () {
@@ -42,6 +42,42 @@ function captureStream( stream ) {
         }
     }
 }
+
+describe( "timestamps", function () {
+    var hook
+
+    beforeEach( function () {
+        hook = captureStream( process.stdout )
+    } )
+
+    afterEach( function () {
+        hook.unhook()
+    } )
+
+    it( "should have a timestamp", function () {
+        var expected = get_timestamp() + "Logger test" + ansi_codes.reset.all + "\n"
+
+        logger()
+            .write( "Logger test" )
+            .end()
+        assert.strictEqual( hook.captured(), expected )
+
+        hook.reset()
+        logger( { timestamp: true } )
+            .write( "Logger test" )
+            .end()
+        assert.strictEqual( hook.captured(), expected )
+    } )
+
+    it( "should not have a timestamp", function () {
+        var expected = "Logger test" + ansi_codes.reset.all + "\n"
+
+        logger( { timestamp: false } )
+            .write( "Logger test" )
+            .end()
+        assert.strictEqual( hook.captured(), expected )
+    } )
+} )
 
 describe( "foreground", function () {
     var hook
@@ -57,15 +93,24 @@ describe( "foreground", function () {
     it( "should be red", function () {
         var expected = get_timestamp() + ansi_codes.fg.red + "Logger test" + ansi_codes.reset.all + "\n"
 
-        logger().fg( "red" ).write( "Logger test" ).end()
+        logger()
+            .fg( "red" )
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
 
         hook.reset()
-        logger().red().write( "Logger test" ).end()
+        logger()
+            .red()
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
 
         hook.reset()
-        logger().fg_red().write( "Logger test" ).end()
+        logger()
+            .fg_red()
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
     } )
 } )
@@ -84,11 +129,17 @@ describe( "background", function () {
     it( "should be red", function () {
         var expected = get_timestamp() + ansi_codes.bg.red + "Logger test" + ansi_codes.reset.all + "\n"
 
-        logger().bg( "red" ).write( "Logger test" ).end()
+        logger()
+            .bg( "red" )
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
 
         hook.reset()
-        logger().bg_red().write( "Logger test" ).end()
+        logger()
+            .bg_red()
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
     } )
 } )
@@ -107,13 +158,17 @@ describe( "modifiers", function () {
     it( "should be bold", function () {
         var expected = get_timestamp() + ansi_codes.modifier.bold + "Logger test" + ansi_codes.reset.all + "\n"
 
-        logger().bold().write( "Logger test" ).end()
+        logger()
+            .bold()
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
 
         hook.reset()
-        logger().modifier( {
-            bold: true
-        } ).write( "Logger test" ).end()
+        logger()
+            .modifier( { bold: true } )
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
     } )
 } )
@@ -132,9 +187,12 @@ describe( "chaining", function () {
     it( "should be bold, blue foreground and yellow background", function () {
         var expected = get_timestamp() + ansi_codes.modifier.bold + ansi_codes.fg.blue + ansi_codes.bg.yellow + "Logger test" + ansi_codes.reset.all + "\n"
 
-        logger().modifier( {
-            bold: true
-        } ).fg( "blue" ).bg( "yellow" ).write( "Logger test" ).end()
+        logger()
+            .modifier( { bold: true } )
+            .fg( "blue" )
+            .bg( "yellow" )
+            .write( "Logger test" )
+            .end()
         assert.strictEqual( hook.captured(), expected )
     } )
 } )

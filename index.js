@@ -4,14 +4,18 @@ class Logger {
 
     constructor( options ) {
         this.stdout = process.stdout
-        this.options = options
+        this._options = Object.assign( {
+            timestamp: true,
+        }, options )
 
         this._set_fg()
         this._set_bg()
         this._set_mods()
         this._set_reset()
 
-        this._write_timestamp()
+        if ( this._options.timestamp ) {
+            this._write_timestamp()
+        }
     }
 
     fg( color ) {

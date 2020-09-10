@@ -2,11 +2,13 @@ const ansi_codes = require( "@stgdp/ansi-codes" )
 
 class Logger {
 
-    constructor( options ) {
+    constructor ( options ) {
         this.stdout = process.stdout
         this._options = Object.assign( {
             timestamp: true,
+            buffer: false,
         }, options )
+        this._output = ""
 
         this._set_fg()
         this._set_bg()
@@ -60,7 +62,7 @@ class Logger {
 
         let _this = this
 
-        Object.keys( options ).forEach( function( mod ) {
+        Object.keys( options ).forEach( function ( mod ) {
 
             if ( !( mod in default_options ) ) {
                 return
@@ -114,7 +116,7 @@ class Logger {
 
         let _this = this
 
-        Object.keys( options ).forEach( function( option ) {
+        Object.keys( options ).forEach( function ( option ) {
 
             if ( !( option in default_options ) ) {
                 return
@@ -131,13 +133,43 @@ class Logger {
     }
 
     write( data ) {
-        this.stdout.write.apply( this.stdout, arguments )
+
+        if ( this._options.buffer ) {
+            this._output += data
+        } else {
+            this.stdout.write( data )
+        }
+
         return this
     }
 
     end() {
         this.write( ansi_codes.reset.all )
         this.write( "\n" )
+
+        return this
+    }
+
+    output( end = false ) {
+
+        if ( end ) {
+            this.end()
+        }
+
+        if ( this._options.buffer ) {
+            this.stdout.write( this._output )
+        }
+
+        return this
+    }
+
+    return() {
+
+        if ( this._options.buffer ) {
+            this.end()
+        }
+
+        return this._output
     }
 
     _write_timestamp() {
@@ -154,7 +186,7 @@ class Logger {
     }
 
     _set_prototype( name, code ) {
-        this[name] = function() {
+        this[name] = function () {
             this.write( code )
             return this
         }
@@ -162,19 +194,19 @@ class Logger {
 
     _set_fg() {
         var that = this
-        Object.keys( ansi_codes.fg ).forEach( function( color ) {
+        Object.keys( ansi_codes.fg ).forEach( function ( color ) {
 
             if ( color !== "bright" ) {
                 let name = `fg_${color}`
                 that._set_prototype( name, ansi_codes.fg[color] )
-                that[color] = function() {
+                that[color] = function () {
                     return that[name]()
                 }
             } else {
-                Object.keys( ansi_codes.fg.bright ).forEach( function( color ) {
+                Object.keys( ansi_codes.fg.bright ).forEach( function ( color ) {
                     let name = `fg_bright_${color}`
                     that._set_prototype( name, ansi_codes.fg.bright[color] )
-                    that[`bright_${color}`] = function() {
+                    that[`bright_${color}`] = function () {
                         return that[name]()
                     }
                 } )
@@ -185,12 +217,12 @@ class Logger {
 
     _set_bg() {
         var that = this
-        Object.keys( ansi_codes.bg ).forEach( function( color ) {
+        Object.keys( ansi_codes.bg ).forEach( function ( color ) {
 
             if ( color !== "bright" ) {
                 that._set_prototype( `bg_${color}`, ansi_codes.bg[color] )
             } else {
-                Object.keys( ansi_codes.bg.bright ).forEach( function( color ) {
+                Object.keys( ansi_codes.bg.bright ).forEach( function ( color ) {
                     that._set_prototype( `bg_bright_${color}`, ansi_codes.bg.bright[color] )
                 } )
             }
@@ -200,10 +232,10 @@ class Logger {
 
     _set_mods() {
         var that = this
-        Object.keys( ansi_codes.modifier ).forEach( function( mod ) {
+        Object.keys( ansi_codes.modifier ).forEach( function ( mod ) {
             let name = `mod_${mod}`
             that._set_prototype( name, ansi_codes.modifier[mod] )
-            that[mod] = function() {
+            that[mod] = function () {
                 return that[name]()
             }
         } )
@@ -211,12 +243,12 @@ class Logger {
 
     _set_reset() {
         var that = this
-        Object.keys( ansi_codes.reset ).forEach( function( reset ) {
+        Object.keys( ansi_codes.reset ).forEach( function ( reset ) {
             that._set_prototype( `reset_${reset}`, ansi_codes.reset[reset] )
         } )
     }
 }
 
-module.exports = exports = function( options ) {
+module.exports = exports = function ( options ) {
     return new Logger( options )
 }

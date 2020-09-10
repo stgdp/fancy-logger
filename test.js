@@ -79,6 +79,58 @@ describe( "timestamps", function () {
     } )
 } )
 
+describe( "buffer", function() {
+    var hook
+
+    beforeEach( function () {
+        hook = captureStream( process.stdout )
+    } )
+
+    afterEach( function () {
+        hook.unhook()
+    } )
+
+    it ( "should enable output", function() {
+        var expected = get_timestamp() + "Logger test" + ansi_codes.reset.all + "\n"
+
+        logger( { buffer: false } )
+            .write( "Logger test" )
+            .end()
+        assert.strictEqual( hook.captured(), expected )
+    } )
+
+    it ( "should disable output", function() {
+        var expected = get_timestamp() + "Logger test" + ansi_codes.reset.all + "\n"
+
+        logger( { buffer: true } )
+            .write( "Logger test" )
+            .end()
+        assert.notStrictEqual( hook.captured(), expected )
+    } )
+
+    it ( "should return output", function() {
+        var expected = get_timestamp() + "Logger test" + ansi_codes.reset.all + "\n"
+
+        var actual = logger( { buffer: true } )
+            .write( "Logger test" )
+            .return()
+        assert.strictEqual( actual, expected )
+    } )
+
+    it ( "should output part, return all", function() {
+        var expected_output = get_timestamp() + "Logger"
+        var expected_console = get_timestamp() + "Logger test" + ansi_codes.reset.all + "\n"
+
+        var actual = logger( { buffer: true } )
+            .write( "Logger" )
+            .output()
+            .write( " test" )
+            .return()
+        assert.strictEqual( hook.captured(), expected_output )
+        assert.strictEqual( actual, expected_console )
+    } )
+} )
+
 describe( "foreground", function () {
     var hook
 

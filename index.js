@@ -21,24 +21,24 @@ class Logger {
     }
 
     fg( color ) {
+        let name = `fg_${color}`
 
-        if ( color == "bright" || !( color in ansi_codes.fg ) ) {
+        if ( typeof this[name] !== "function" ) {
             return this
         }
 
-        let name = `fg_${color}`
         this[name]()
 
         return this
     }
 
     bg( color ) {
+        let name = `bg_${color}`
 
-        if ( color == "bright" || !( color in ansi_codes.bg ) ) {
+        if ( typeof this[name] !== "function" ) {
             return this
         }
 
-        let name = `bg_${color}`
         this[name]()
 
         return this

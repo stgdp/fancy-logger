@@ -19,7 +19,8 @@
   },
   "keywords": [],
   "dependencies": {
-    "@stgdp/ansi-codes": "1.0.0"
+    "@stgdp/ansi-codes": "1.0.0",
+    "fecha": "^4.2.0"
   },
   "devDependencies": {
     "mocha": "^8.1.3"

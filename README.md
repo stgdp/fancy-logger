@@ -38,10 +38,11 @@ logger().white().bold().bg_red().write("I'm formatted!").end()
 
 Starts the logger with a timestamp by default. Options can be supplied to the logger in an object.
 
-| Options     | Default | Operation                                                      |
-| ----------- | ------- | -------------------------------------------------------------- |
-| `timestamp` | `true`  | Enables the timestamp                                          |
-| `buffer`    | `false` | Buffers the output to be returned or outputted at a later time |
+| Options     | Default    | Operation                                                                                           |
+| ----------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| `timestamp` | `true`     | Enables the timestamp                                                                               |
+| `format`    | `HH:mm:ss` | Sets the format for the timestamp. Check out the [fecha documentation](https://github.com/taylorhakes/fecha#formatting-tokens) for the formatting characters. |
+| `buffer`    | `false`    | Buffers the output to be returned or outputted at a later time                                      |
 
 #### Usage
 
@@ -123,21 +124,21 @@ logger().bg_red()
 
 The `modifier` method allows a modifier to be applied to the console log. All options listed below can be supplied as an object (e.g. `{ bold: true }`) or as a string (e.g. `"bold"`). All options are also available as standalone methods (e.g. `bold()`) and as methods prefixed with `mod_` (e.g. `mod_bold()`)
 
-- `bold`
-- `dim`
-- `italic`
-- `underline`
-- `inverse`
-- `hidden`
-- `strike`
-- `frame`
-- `encircle`
-- `overline`
+-   `bold`
+-   `dim`
+-   `italic`
+-   `underline`
+-   `inverse`
+-   `hidden`
+-   `strike`
+-   `frame`
+-   `encircle`
+-   `overline`
 
 #### Usage
 
 ```javascript
-logger().modifier({ bold: true})
+logger().modifier({ bold: true })
 
 // Or
 logger().modifier("bold")
@@ -153,24 +154,24 @@ logger().mod_bold()
 
 The `reset` method allows you to reset any of the modifiers applied to the console log. All options listed below can be supplied as an object (e.g. `{ bold: true }`) or as a string (e.g. `"bold"`). All options are also available as methods prefixed with `reset_` (e.g. `mod_bold()`)
 
-- `all`
-- `bold`
-- `dim`
-- `italic`
-- `underline`
-- `inverse`
-- `hidden`
-- `strike`
-- `fg`
-- `bg`
-- `frame`
-- `encircle`
-- `overline`
+-   `all`
+-   `bold`
+-   `dim`
+-   `italic`
+-   `underline`
+-   `inverse`
+-   `hidden`
+-   `strike`
+-   `fg`
+-   `bg`
+-   `frame`
+-   `encircle`
+-   `overline`
 
 #### Usage
 
 ```javascript
-logger().reset({ bold: true})
+logger().reset({ bold: true })
 
 // Or
 logger().reset("bold")

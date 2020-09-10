@@ -8,6 +8,7 @@ class Logger {
         this.stdout = process.stdout
         this._options = Object.assign( {
             timestamp: true,
+            format: "HH:mm:ss",
             buffer: false,
         }, options )
         this._output = ""

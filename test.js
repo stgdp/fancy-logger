@@ -2,18 +2,16 @@ require( "mocha" )
 const assert = require( "assert" )
 
 const ansi_codes = require( "@stgdp/ansi-codes" )
+const fecha = require( "fecha" ).format
 const logger = require( "./" )
 
-function get_timestamp() {
-    var time = new Date()
+function get_timestamp( format = "HH:mm:ss" ) {
     var timestamp = ""
 
     timestamp += ansi_codes.reset.all
     timestamp += "["
     timestamp += ansi_codes.fg.bright.black
-    timestamp += ( "0" + time.getHours() ).slice( -2 ) + ":"
-    timestamp += ( "0" + time.getMinutes() ).slice( -2 ) + ":"
-    timestamp += ( "0" + time.getSeconds() ).slice( -2 )
+    timestamp += fecha( new Date(), format )
     timestamp += ansi_codes.reset.fg
     timestamp += "] - "
 
@@ -73,6 +71,15 @@ describe( "timestamps", function () {
         var expected = "Logger test" + ansi_codes.reset.all + "\n"
 
         logger( { timestamp: false } )
+            .write( "Logger test" )
+            .end()
+        assert.strictEqual( hook.captured(), expected )
+    } )
+
+    it( "should change the timestamp format", function() {
+        var expected = get_timestamp( "YYYY-MM-DD HH:mm:ss" ) + "Logger test" + ansi_codes.reset.all + "\n"
+
+        logger( { format: "YYYY-MM-DD HH:mm:ss" } )
             .write( "Logger test" )
             .end()
         assert.strictEqual( hook.captured(), expected )

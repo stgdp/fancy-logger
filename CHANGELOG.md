@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+-   Implemented formatting the timestamp
+
 ## [1.0.0-beta.1] - 2020-09-10
 
 ### Added

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0-beta.1] - 2020-09-10
 
 ### Added
 
@@ -26,5 +26,6 @@
 
 -   Initial (beta) version
 
-[unreleased]: https://github.com/stgdp/fancy-logger/compare/v1.0.0-beta.0...HEAD
+[unreleased]: https://github.com/stgdp/fancy-logger/compare/v1.0.0-beta.1...HEAD
+[1.0.0-beta.1]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.1
 [1.0.0-beta.0]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.0

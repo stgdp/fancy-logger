@@ -1,4 +1,6 @@
-const ansi_codes = require( "@stgdp/ansi-codes" )
+const write = require( "./lib/write" )
+const modifiers = require( "./lib/modifiers" )
+const helpers = require( "./lib/helpers" )
 
 class Logger {
 
@@ -20,257 +22,22 @@ class Logger {
         }
     }
 
-    fg( color ) {
-        let name = `fg_${color}`
+    write = write.write
+    end = write.end
+    output = write.output
+    return = write.return
+    _write_timestamp = write.write_timestamp
 
-        if ( typeof this[name] !== "function" ) {
-            return this
-        }
+    fg = modifiers.fg
+    bg = modifiers.bg
+    modifier = modifiers.modifier
+    reset = modifiers.reset
 
-        this[name]()
-
-        return this
-    }
-
-    bg( color ) {
-        let name = `bg_${color}`
-
-        if ( typeof this[name] !== "function" ) {
-            return this
-        }
-
-        this[name]()
-
-        return this
-    }
-
-    modifier( options ) {
-
-        if ( typeof options === "string" ) {
-
-            if ( !( options in ansi_codes.modifier ) ) {
-                options = {}
-            } else {
-                this[`mod_${options}`]()
-                return this
-            }
-
-        }
-
-        if ( options == null || typeof options !== "object" || Object.keys( options ).length === 0 ) {
-            return this
-        }
-
-        let default_options = {
-            bold: false,
-            dim: false,
-            italic: false,
-            underline: false,
-            inverse: false,
-            hidden: false,
-            strike: false,
-            frame: false,
-            encircle: false,
-            overline: false,
-        }
-
-        options = Object.assign( default_options, options )
-
-        let _this = this
-
-        Object.keys( options ).forEach( function ( mod ) {
-
-            if ( !( mod in default_options ) ) {
-                return
-            }
-
-            if ( !!options[mod] ) {
-                _this[mod]()
-            }
-
-        } )
-
-        return this
-    }
-
-    reset( options = {} ) {
-
-        if ( typeof options === "string" ) {
-
-            if ( !( options in ansi_codes.reset ) ) {
-                options = {}
-            } else {
-                this[`reset_${options}`]()
-                return this
-            }
-
-        }
-
-        if ( options == null || typeof options !== "object" ) {
-            options = {}
-        }
-
-        if ( Object.keys( options ).length === 0 ) {
-            this.write( ansi_codes.reset.all )
-            return this
-        }
-
-
-        let default_options = {
-            all: false,
-            bold: false,
-            dim: false,
-            italic: false,
-            underline: false,
-            inverse: false,
-            hidden: false,
-            strike: false,
-            fg: false,
-            bg: false,
-            frame: false,
-            encircle: false,
-            overline: false,
-        }
-
-        options = Object.assign( default_options, options )
-
-        let _this = this
-
-        Object.keys( options ).forEach( function ( option ) {
-
-            if ( !( option in default_options ) ) {
-                return
-            }
-
-            if ( !!options[option] ) {
-                _this[`reset_${option}`]()
-            }
-
-
-        } )
-
-        return this
-    }
-
-    write( data ) {
-
-        if ( this._options.buffer ) {
-            this._output += data
-        } else {
-            this.stdout.write( data )
-        }
-
-        return this
-    }
-
-    end() {
-        this.write( ansi_codes.reset.all )
-        this.write( "\n" )
-
-        return this
-    }
-
-    output( end = false ) {
-
-        if ( typeof end !== "boolean" ) {
-            end = false
-        }
-
-        if ( end ) {
-            this.end()
-        }
-
-        if ( this._options.buffer ) {
-            this.stdout.write( this._output )
-        }
-
-        return this
-    }
-
-    return() {
-
-        if ( this._options.buffer ) {
-            this.end()
-        }
-
-        return this._output
-    }
-
-    _write_timestamp() {
-        var time = new Date()
-
-        this.write( ansi_codes.reset.all )
-        this.write( "[" )
-        this.write( ansi_codes.fg.bright.black )
-        this.write( ( "0" + time.getHours() ).slice( -2 ) + ":" )
-        this.write( ( "0" + time.getMinutes() ).slice( -2 ) + ":" )
-        this.write( ( "0" + time.getSeconds() ).slice( -2 ) )
-        this.write( ansi_codes.reset.fg )
-        this.write( "] - " )
-    }
-
-    _set_prototype( name, code ) {
-        this[name] = function () {
-            this.write( code )
-            return this
-        }
-    }
-
-    _set_fg() {
-        var that = this
-        Object.keys( ansi_codes.fg ).forEach( function ( color ) {
-
-            if ( color !== "bright" ) {
-                let name = `fg_${color}`
-                that._set_prototype( name, ansi_codes.fg[color] )
-                that[color] = function () {
-                    return that[name]()
-                }
-            } else {
-                Object.keys( ansi_codes.fg.bright ).forEach( function ( color ) {
-                    let name = `fg_bright_${color}`
-                    that._set_prototype( name, ansi_codes.fg.bright[color] )
-                    that[`bright_${color}`] = function () {
-                        return that[name]()
-                    }
-                } )
-            }
-
-        } )
-    }
-
-    _set_bg() {
-        var that = this
-        Object.keys( ansi_codes.bg ).forEach( function ( color ) {
-
-            if ( color !== "bright" ) {
-                that._set_prototype( `bg_${color}`, ansi_codes.bg[color] )
-            } else {
-                Object.keys( ansi_codes.bg.bright ).forEach( function ( color ) {
-                    that._set_prototype( `bg_bright_${color}`, ansi_codes.bg.bright[color] )
-                } )
-            }
-
-        } )
-    }
-
-    _set_mods() {
-        var that = this
-        Object.keys( ansi_codes.modifier ).forEach( function ( mod ) {
-            let name = `mod_${mod}`
-            that._set_prototype( name, ansi_codes.modifier[mod] )
-            that[mod] = function () {
-                return that[name]()
-            }
-        } )
-    }
-
-    _set_reset() {
-        var that = this
-        Object.keys( ansi_codes.reset ).forEach( function ( reset ) {
-            that._set_prototype( `reset_${reset}`, ansi_codes.reset[reset] )
-        } )
-    }
+    _set_prototype = helpers._set_prototype
+    _set_fg = helpers._set_fg
+    _set_bg = helpers._set_bg
+    _set_mods = helpers._set_mods
+    _set_reset = helpers._set_reset
 }
 
 module.exports = exports = function ( options ) {

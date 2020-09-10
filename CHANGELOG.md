@@ -14,6 +14,7 @@
 
 -   Converted the logger to a class instead of a function with prototypes
 -   Implemented more checks to the `modifier`, `reset` and `output` methods
+-   Moved functionality out to libs for simplicity of updating
 
 ### Fixed
 

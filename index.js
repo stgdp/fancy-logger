@@ -45,6 +45,22 @@ class Logger {
     }
 
     modifier( options ) {
+
+        if ( typeof options === "string" ) {
+
+            if ( !( options in ansi_codes.modifier ) ) {
+                options = {}
+            } else {
+                this[`mod_${options}`]()
+                return this
+            }
+
+        }
+
+        if ( options == null || typeof options !== "object" || Object.keys( options ).length === 0 ) {
+            return this
+        }
+
         let default_options = {
             bold: false,
             dim: false,
@@ -88,6 +104,10 @@ class Logger {
                 return this
             }
 
+        }
+
+        if ( options == null || typeof options !== "object" ) {
+            options = {}
         }
 
         if ( Object.keys( options ).length === 0 ) {
@@ -151,6 +171,10 @@ class Logger {
     }
 
     output( end = false ) {
+
+        if ( typeof end !== "boolean" ) {
+            end = false
+        }
 
         if ( end ) {
             this.end()

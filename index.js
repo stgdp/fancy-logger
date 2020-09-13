@@ -28,28 +28,17 @@ class Logger {
         return this
     }
 
-    end() {
+    get end() {
         this.all.write( "\n" )
         return this
     }
 
-    output( end = false ) {
-        if ( typeof end !== "boolean" ) {
-            end = false
-        }
-
-        if ( end ) {
-            this.end()
-        }
-
-        if ( this._options.buffer ) {
-            this.stdout.write( this._output )
-        }
-
+    get output() {
+        this.stdout.write( this._output )
         return this
     }
 
-    return() {
+    get return() {
         return this._output
     }
 

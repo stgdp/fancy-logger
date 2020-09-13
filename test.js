@@ -62,7 +62,7 @@ describe( "timestamps", function () {
 
         logger()
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -71,7 +71,7 @@ describe( "timestamps", function () {
 
         logger( { timestamp: true } )
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -80,7 +80,7 @@ describe( "timestamps", function () {
 
         logger( { timestamp: false } )
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -89,7 +89,7 @@ describe( "timestamps", function () {
 
         logger( { format: "YYYY-MM-DD HH:mm:ss" } )
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 } )
@@ -110,7 +110,7 @@ describe( "buffer", function() {
 
         logger()
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -119,7 +119,7 @@ describe( "buffer", function() {
 
         logger( { buffer: false } )
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -128,7 +128,7 @@ describe( "buffer", function() {
 
         logger( { buffer: true } )
             .write( "Logger test" )
-            .end()
+            .end
         assert.notStrictEqual( hook.captured(), expected )
     } )
 
@@ -137,8 +137,8 @@ describe( "buffer", function() {
 
         var actual = logger( { buffer: true } )
             .write( "Logger test" )
-            .end()
-            .return()
+            .end
+            .return
         assert.strictEqual( actual, expected )
         assert.notStrictEqual( hook.captured(), expected )
     } )
@@ -149,10 +149,10 @@ describe( "buffer", function() {
 
         var actual = logger( { buffer: true } )
             .write( "Logger" )
-            .output()
+            .output
             .write( " test" )
-            .end()
-            .return()
+            .end
+            .return
         assert.strictEqual( hook.captured(), expected_output )
         assert.strictEqual( actual, expected_return )
 
@@ -180,7 +180,7 @@ describe( "foreground", function () {
                 logger()
                     .fg[color]
                     .write( "Logger test" )
-                    .end()
+                    .end
                 assert.strictEqual( hook.captured(), expected )
             } )
 
@@ -190,7 +190,7 @@ describe( "foreground", function () {
                 logger()
                     [color]
                     .write( "Logger test" )
-                    .end()
+                    .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
@@ -201,7 +201,7 @@ describe( "foreground", function () {
                     logger()
                         .fg.bright[bright]
                         .write( "Logger test" )
-                        .end()
+                        .end
                     assert.strictEqual( hook.captured(), expected )
                 } )
 
@@ -211,7 +211,7 @@ describe( "foreground", function () {
                     logger()
                         .bright[bright]
                         .write( "Logger test" )
-                        .end()
+                        .end
                     assert.strictEqual( hook.captured(), expected )
                 } )
             } )
@@ -238,7 +238,7 @@ describe( "background", function () {
                 logger()
                     .bg[color]
                     .write( "Logger test" )
-                    .end()
+                    .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
@@ -249,7 +249,7 @@ describe( "background", function () {
                     logger()
                         .bg.bright[bright]
                         .write( "Logger test" )
-                        .end()
+                        .end
                     assert.strictEqual( hook.captured(), expected )
                 } )
             } )
@@ -275,7 +275,7 @@ describe( "decorations", function () {
             logger()
                 .decoration[decoration]
                 .write( "Logger test" )
-                .end()
+                .end
             assert.strictEqual( hook.captured(), expected )
         } )
 
@@ -285,7 +285,7 @@ describe( "decorations", function () {
             logger()
                 [decoration]
                 .write( "Logger test" )
-                .end()
+                .end
             assert.strictEqual( hook.captured(), expected )
         } )
     } )
@@ -310,7 +310,7 @@ describe( "reset", function () {
             .write( "Logger" )
             .reset.all
             .write( " test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -322,7 +322,7 @@ describe( "reset", function () {
             .write( "Logger" )
             .all
             .write( " test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 
@@ -340,7 +340,7 @@ describe( "reset", function () {
                     .write( "Logger" )
                     [`reset_${reset}`]
                     .write( " test" )
-                    .end()
+                    .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
@@ -352,7 +352,7 @@ describe( "reset", function () {
                     .write( "Logger" )
                     .reset[reset]
                     .write( " test" )
-                    .end()
+                    .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         }
@@ -379,7 +379,7 @@ describe( "chaining", function () {
             .blue
             .bg.yellow
             .write( "Logger test" )
-            .end()
+            .end
         assert.strictEqual( hook.captured(), expected )
     } )
 } )

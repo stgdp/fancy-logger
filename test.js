@@ -137,6 +137,7 @@ describe( "buffer", function() {
 
         var actual = logger( { buffer: true } )
             .write( "Logger test" )
+            .end()
             .return()
         assert.strictEqual( actual, expected )
         assert.notStrictEqual( hook.captured(), expected )
@@ -150,6 +151,7 @@ describe( "buffer", function() {
             .write( "Logger" )
             .output()
             .write( " test" )
+            .end()
             .return()
         assert.strictEqual( hook.captured(), expected_output )
         assert.strictEqual( actual, expected_return )
@@ -158,10 +160,6 @@ describe( "buffer", function() {
         console.log()
     } )
 } )
-
-function loop_ansi( area ) {
-
-}
 
 describe( "foreground", function () {
     var hook

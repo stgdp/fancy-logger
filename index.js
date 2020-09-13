@@ -50,10 +50,6 @@ class Logger {
     }
 
     return() {
-        if ( this._options.buffer ) {
-            this.end()
-        }
-
         return this._output
     }
 

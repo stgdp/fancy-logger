@@ -28,8 +28,8 @@ yarn add @stgdp/fancy-logger
 ```javascript
 const logger = require("@stgdp/fancy-logger")
 
-// Produces a bold console log with red background and white text
-logger().white().bold().bg_red().write("I'm formatted!").end()
+// Produces a bold console log with a white background and red text
+logger().red.bold.bg.white.write("I'm formatted!").end
 ```
 
 ## Reference
@@ -38,11 +38,11 @@ logger().white().bold().bg_red().write("I'm formatted!").end()
 
 Starts the logger with a timestamp by default. Options can be supplied to the logger in an object.
 
-| Options     | Default    | Operation                                                                                           |
-| ----------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| `timestamp` | `true`     | Enables the timestamp                                                                               |
+| Options     | Default    | Operation                                                                                                                                                     |
+| ----------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timestamp` | `true`     | Enables the timestamp                                                                                                                                         |
 | `format`    | `HH:mm:ss` | Sets the format for the timestamp. Check out the [fecha documentation](https://github.com/taylorhakes/fecha#formatting-tokens) for the formatting characters. |
-| `buffer`    | `false`    | Buffers the output to be returned or outputted at a later time                                      |
+| `buffer`    | `false`    | Buffers the output to be returned or outputted at a later time                                                                                                |
 
 #### Usage
 
@@ -53,13 +53,72 @@ logger()
 // With options
 logger({
     timestamp: true,
+    format: "HH:mm:ss",
     buffer: false,
 })
 ```
 
-### fg( color: String )
+### write( content: String )
 
-The `fg` method allows a foreground color to be applied to the console log. All options listed below are also available as standalone methods (e.g. `red()`) and as methods prefixed with `fg_` (e.g. `fg_red()`)
+Outputs provided content to the console through the logger. When the `buffer` option is set to `true`, this will be stored within the logger until either `output` or `return` are called instead.
+
+### Usage
+
+```javascript
+// Outputs "hello world" to the console with a timestamp and new line.
+logger().write("hello world").end
+```
+
+### end
+
+Resets all styles and outputs a new line to the console through the logger.
+
+### Usage
+
+```javascript
+// Outputs "hello world" to the console with a timestamp and new line.
+logger().write("hello world").end
+```
+
+### output
+
+Outputs the buffer to the console through the logger.
+
+### Usage
+
+```javascript
+// Outputs "hello world" to the console with a timestamp and new line.
+logger({ buffer: true }).write("hello world").end.output
+```
+
+### return
+
+Returns the buffer created by the logger, along with the ansi codes for the modifiers used.
+
+### Usage
+
+```javascript
+// Returns "hello world"
+var msg = logger({ buffer: true }).write("hello world").end.return
+```
+
+### Modifier types
+
+Modifier types adjust a parameter within the logger system, allowing the console to have it's foreground, background or decoration changed. The following modifier types are available;
+
+| Modifier type | Description                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `fg`          | Allows for setting a foreground color modifier (e.g. `red`)                                                           |
+| `bg`          | Allows for setting a background color modifier (e.g. `red`)                                                           |
+| `decoration`  | Allows for setting a decoration modifier (e.g. `bold`)                                                                |
+| `reset`       | Allows for issuing a reset modifier (e.g. `all`)                                                                      |
+| `bright`      | Alters the foreground and background modifiers to use the bright variant. This modifier type works on a toggle system |
+
+### fg and bg
+
+Foreground and background modifiers allow the logger to change their foreground and background colors respectively. While foreground modifiers only need to be preceeded by the `fg` modifier type if another modifier type was previously used, background modifiers always need to be preceeded by the `bg` modifier type. Bright variants can be accessed by using the `bright` modifier type.
+
+#### Available modifiers
 
 -   `black`
 -   `red`
@@ -69,60 +128,26 @@ The `fg` method allows a foreground color to be applied to the console log. All 
 -   `magenta`
 -   `cyan`
 -   `white`
--   `bright_black`
--   `bright_red`
--   `bright_green`
--   `bright_yellow`
--   `bright_blue`
--   `bright_magenta`
--   `bright_cyan`
--   `bright_white`
 
 #### Usage
 
 ```javascript
-logger().fg("red")
+// Sets the logger foreground color to red
+logger().red.write("hello world").end
+logger().fg.red.write("hello world").end
 
-// Or
-logger().red()
+// Sets the logger background color to red
+logger().bg.red.write("hello world").end
 
-// Or
-logger().fg_red()
+// Sets the logger background color to bright red
+logger().bg.bright.red.write("hello world").end
 ```
 
-### bg( color: String )
+### decoration
 
-The `bg` method allows a background color to be applied to the console log. All options listed below are available as methods prefixed with `bg_` (e.g. `bg_red()`)
+Decoration modifiers allow the logger to change their decorations. These modifiers only have to be preceeded by the `decoration` modifier type is another modifier type was previously used.
 
--   `black`
--   `red`
--   `green`
--   `yellow`
--   `blue`
--   `magenta`
--   `cyan`
--   `white`
--   `bright_black`
--   `bright_red`
--   `bright_green`
--   `bright_yellow`
--   `bright_blue`
--   `bright_magenta`
--   `bright_cyan`
--   `bright_white`
-
-#### Usage
-
-```javascript
-logger().bg("red")
-
-// Or
-logger().bg_red()
-```
-
-### modifier( ?options: Object|String )
-
-The `modifier` method allows a modifier to be applied to the console log. All options listed below can be supplied as an object (e.g. `{ bold: true }`) or as a string (e.g. `"bold"`). All options are also available as standalone methods (e.g. `bold()`) and as methods prefixed with `mod_` (e.g. `mod_bold()`)
+#### Available modifiers
 
 -   `bold`
 -   `dim`
@@ -138,21 +163,16 @@ The `modifier` method allows a modifier to be applied to the console log. All op
 #### Usage
 
 ```javascript
-logger().modifier({ bold: true })
-
-// Or
-logger().modifier("bold")
-
-// Or
-logger().bold()
-
-// Or
-logger().mod_bold()
+// Sets the logger decoration to bold
+logger().bold.write("hello world").end
+logger().decoration.bold.write("hello world").end
 ```
 
-### reset( ?options: Object|String )
+### reset
 
-The `reset` method allows you to reset any of the modifiers applied to the console log. All options listed below can be supplied as an object (e.g. `{ bold: true }`) or as a string (e.g. `"bold"`). All options are also available as methods prefixed with `reset_` (e.g. `mod_bold()`)
+Reset modifiers allow the logger to reset previously applied modifiers back to their default values. All modifiers except for `all`, `reset_fg` and `reset_bg` have to be preceeded by the `reset` modifier type.
+
+#### Available modifiers
 
 -   `all`
 -   `bold`
@@ -162,8 +182,8 @@ The `reset` method allows you to reset any of the modifiers applied to the conso
 -   `inverse`
 -   `hidden`
 -   `strike`
--   `fg`
--   `bg`
+-   `reset_fg`
+-   `reset_bg`
 -   `frame`
 -   `encircle`
 -   `overline`
@@ -171,13 +191,12 @@ The `reset` method allows you to reset any of the modifiers applied to the conso
 #### Usage
 
 ```javascript
-logger().reset({ bold: true })
+// Resets all modifiers
+logger().red.bold.write("hello").all.write(" world").end
+logger().red.bold.write("hello").reset.all.write(" world").end
 
-// Or
-logger().reset("bold")
-
-// Or
-logger().reset_bold()
+// Resets the bold modifier, leaving the foreground modifier alone
+logger().red.bold.write("hello").reset.bold.write(" world").end
 ```
 
 ## License

@@ -5,6 +5,14 @@
 ### Added
 -   Implemented formatting the timestamp
 
+### Changed
+-   Converted all methods except for write to getters as they didn't need to be methods
+-   `modifier` is now called `decoration`
+-   Reverted back to the original single file structure as it's now more simplified!
+
+### Removed
+-   Calling `return` no longer adds an end statement, `end` should be called before this
+
 ## [1.0.0-beta.1] - 2020-09-10
 
 ### Added

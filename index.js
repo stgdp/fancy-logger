@@ -1,4 +1,8 @@
+const fs = require( "fs" )
+const path = require( "path" )
+
 const ansi_codes = require( "@stgdp/ansi-codes" )
+const strip_ansi = require( "strip-ansi" )
 const timestamp = require( "fecha" ).format
 
 class Logger {
@@ -8,6 +12,8 @@ class Logger {
             timestamp: true,
             format: "HH:mm:ss",
             buffer: false,
+            file: false,
+            file_options: {}
         }, options )
         this._output = ""
         this._modifier = ""
@@ -19,9 +25,9 @@ class Logger {
     }
 
     write( data ) {
-        if ( this._options.buffer ) {
-            this._output += data
-        } else {
+        this._output += data
+
+        if ( !this._options.buffer ) {
             this.stdout.write( data )
         }
 
@@ -34,12 +40,36 @@ class Logger {
     }
 
     get output() {
-        this.stdout.write( this._output )
+        if ( this._options.buffer ) {
+            this.stdout.write( this._output )
+        }
+
         return this
     }
 
     get return() {
         return this._output
+    }
+
+    to_file( file = false ) {
+        if ( file == false ) {
+            file = this._options.file
+        }
+
+        if ( file == false ) {
+            return this
+        }
+
+        while ( true ) {
+            try {
+                write_file.call( this, file )
+                break
+            } catch ( err ) {
+                throw err
+            }
+        }
+
+        return this
     }
 
     get bright() {
@@ -72,6 +102,18 @@ function define_get( name, callback ) {
     } )
 }
 
+async function write_file( file ) {
+    fs.mkdirSync( path.dirname( file ), {
+        recursive: true
+    } )
+
+    var file_options = Object.assign( this._options.file_options, {
+        flag: "a"
+    } )
+
+    await fs.writeFileSync( path.resolve( file ), strip_ansi( this._output ), file_options )
+}
+
 ["fg", "bg", "modifier", "reset"].forEach( function ( area ) {
     var name = area
 
@@ -79,7 +121,7 @@ function define_get( name, callback ) {
         name = "decoration"
     }
 
-    define_get( name, function() {
+    define_get( name, function () {
         this._modifier = area
         return this
     } )
@@ -90,7 +132,7 @@ Object.keys( ansi_codes.fg ).forEach( function ( color ) {
         return
     }
 
-    define_get( color, function() {
+    define_get( color, function () {
         if ( this._modifier != "fg" && this._modifier != "bg" ) {
             this._modifier = "fg"
         }
@@ -113,7 +155,7 @@ Object.keys( ansi_codes.reset ).forEach( function ( decoration ) {
             name = `reset_${decoration}`
         }
 
-        define_get( name, function() {
+        define_get( name, function () {
             this._modifier = "reset"
             this.write( ansi_codes[this._modifier][decoration] )
             this._modifier = ""
@@ -123,7 +165,7 @@ Object.keys( ansi_codes.reset ).forEach( function ( decoration ) {
         return
     }
 
-    define_get( decoration, function() {
+    define_get( decoration, function () {
         if ( this._modifier != "modifier" && this._modifier != "reset" ) {
             this._modifier = "modifier"
         }

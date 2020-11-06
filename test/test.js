@@ -1,9 +1,14 @@
 require( "mocha" )
 const assert = require( "assert" )
 
+const fs = require( "fs" )
+const path = require( "path" )
+
 const ansi_codes = require( "@stgdp/ansi-codes" )
 const fecha = require( "fecha" ).format
-const logger = require( "./" )
+const strip_ansi = require( "strip-ansi" )
+
+const logger = require( "../" )
 
 function set_expected( content = "", timestamp = "HH:mm:ss" ) {
     var expected = ""
@@ -46,6 +51,10 @@ function captureStream( stream ) {
     }
 }
 
+function get_file( name ) {
+    return fs.readFileSync( name, { encoding: "utf8" } )
+}
+
 describe( "timestamps", function () {
     var hook
 
@@ -84,7 +93,7 @@ describe( "timestamps", function () {
         assert.strictEqual( hook.captured(), expected )
     } )
 
-    it( "should change the timestamp format", function() {
+    it( "should change the timestamp format", function () {
         var expected = set_expected( "Logger test", "YYYY-MM-DD HH:mm:ss" )
 
         logger( { format: "YYYY-MM-DD HH:mm:ss" } )
@@ -94,7 +103,7 @@ describe( "timestamps", function () {
     } )
 } )
 
-describe( "buffer", function() {
+describe( "buffer", function () {
     var hook
 
     beforeEach( function () {
@@ -105,7 +114,7 @@ describe( "buffer", function() {
         hook.unhook()
     } )
 
-    it ( "should enable output - no option", function() {
+    it( "should enable output - no option", function () {
         var expected = set_expected( "Logger test" )
 
         logger()
@@ -114,7 +123,7 @@ describe( "buffer", function() {
         assert.strictEqual( hook.captured(), expected )
     } )
 
-    it ( "should enable output - with option", function() {
+    it( "should enable output - with option", function () {
         var expected = set_expected( "Logger test" )
 
         logger( { buffer: false } )
@@ -123,7 +132,7 @@ describe( "buffer", function() {
         assert.strictEqual( hook.captured(), expected )
     } )
 
-    it ( "should disable output", function() {
+    it( "should disable output", function () {
         var expected = set_expected( "Logger test" )
 
         logger( { buffer: true } )
@@ -132,7 +141,7 @@ describe( "buffer", function() {
         assert.notStrictEqual( hook.captured(), expected )
     } )
 
-    it ( "should return output", function() {
+    it( "should return output", function () {
         var expected = set_expected( "Logger test" )
 
         var actual = logger( { buffer: true } )
@@ -143,7 +152,7 @@ describe( "buffer", function() {
         assert.notStrictEqual( hook.captured(), expected )
     } )
 
-    it ( "should output part, return all", function() {
+    it( "should output part, return all", function () {
         var expected_output = get_timestamp() + "Logger"
         var expected_return = set_expected( "Logger test" )
 
@@ -172,9 +181,9 @@ describe( "foreground", function () {
         hook.unhook()
     } )
 
-    Object.keys( ansi_codes.fg ).forEach( function( color ) {
+    Object.keys( ansi_codes.fg ).forEach( function ( color ) {
         if ( color != "bright" ) {
-            it ( `should be ${color} - with fg`, function() {
+            it( `should be ${color} - with fg`, function () {
                 var expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
 
                 logger()
@@ -184,18 +193,18 @@ describe( "foreground", function () {
                 assert.strictEqual( hook.captured(), expected )
             } )
 
-            it ( `should be ${color} - without fg`, function() {
+            it( `should be ${color} - without fg`, function () {
                 var expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
 
                 logger()
-                    [color]
+                [color]
                     .write( "Logger test" )
                     .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
-            Object.keys( ansi_codes.fg.bright ).forEach( function( bright ) {
-                it ( `should be bright ${bright} - with fg`, function() {
+            Object.keys( ansi_codes.fg.bright ).forEach( function ( bright ) {
+                it( `should be bright ${bright} - with fg`, function () {
                     var expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
 
                     logger()
@@ -205,7 +214,7 @@ describe( "foreground", function () {
                     assert.strictEqual( hook.captured(), expected )
                 } )
 
-                it ( `should be bright ${bright} - without fg`, function() {
+                it( `should be bright ${bright} - without fg`, function () {
                     var expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
 
                     logger()
@@ -230,9 +239,9 @@ describe( "background", function () {
         hook.unhook()
     } )
 
-    Object.keys( ansi_codes.bg ).forEach( function( color ) {
+    Object.keys( ansi_codes.bg ).forEach( function ( color ) {
         if ( color != "bright" ) {
-            it ( `should be ${color}`, function() {
+            it( `should be ${color}`, function () {
                 var expected = set_expected( `${ansi_codes.bg[color]}Logger test` )
 
                 logger()
@@ -242,8 +251,8 @@ describe( "background", function () {
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
-            Object.keys( ansi_codes.bg.bright ).forEach( function( bright ) {
-                it ( `should be bright ${bright}`, function() {
+            Object.keys( ansi_codes.bg.bright ).forEach( function ( bright ) {
+                it( `should be bright ${bright}`, function () {
                     var expected = set_expected( `${ansi_codes.bg.bright[bright]}Logger test` )
 
                     logger()
@@ -268,8 +277,8 @@ describe( "decorations", function () {
         hook.unhook()
     } )
 
-    Object.keys( ansi_codes.modifier ).forEach( function( decoration ) {
-        it ( `should be ${decoration} - with decoration`, function() {
+    Object.keys( ansi_codes.modifier ).forEach( function ( decoration ) {
+        it( `should be ${decoration} - with decoration`, function () {
             var expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
 
             logger()
@@ -279,11 +288,11 @@ describe( "decorations", function () {
             assert.strictEqual( hook.captured(), expected )
         } )
 
-        it ( `should be ${decoration} - without decoration`, function() {
+        it( `should be ${decoration} - without decoration`, function () {
             var expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
 
             logger()
-                [decoration]
+            [decoration]
                 .write( "Logger test" )
                 .end
             assert.strictEqual( hook.captured(), expected )
@@ -326,29 +335,29 @@ describe( "reset", function () {
         assert.strictEqual( hook.captured(), expected )
     } )
 
-    Object.keys( ansi_codes.reset ).forEach( function( reset ) {
+    Object.keys( ansi_codes.reset ).forEach( function ( reset ) {
         if ( reset == "all" ) {
             return
         }
 
         if ( reset == "fg" || reset == "bg" ) {
-            it ( `should start ${reset} red and change to normal - specific`, function() {
+            it( `should start ${reset} red and change to normal - specific`, function () {
                 var expected = set_expected( `${ansi_codes[reset].red}Logger${ansi_codes.reset[reset]} test` )
 
                 logger()
-                    [reset].red
+                [reset].red
                     .write( "Logger" )
-                    [`reset_${reset}`]
+                [`reset_${reset}`]
                     .write( " test" )
                     .end
                 assert.strictEqual( hook.captured(), expected )
             } )
         } else {
-            it ( `should start ${reset} and change to normal - specific`, function() {
+            it( `should start ${reset} and change to normal - specific`, function () {
                 var expected = set_expected( `${ansi_codes.modifier[reset]}Logger${ansi_codes.reset[reset]} test` )
 
                 logger()
-                    [reset]
+                [reset]
                     .write( "Logger" )
                     .reset[reset]
                     .write( " test" )
@@ -358,7 +367,6 @@ describe( "reset", function () {
         }
     } )
 } )
-
 
 describe( "chaining", function () {
     var hook
@@ -381,5 +389,112 @@ describe( "chaining", function () {
             .write( "Logger test" )
             .end
         assert.strictEqual( hook.captured(), expected )
+    } )
+} )
+
+describe( "file", function () {
+    fs.rmdirSync( "./test/logs", { recursive: true } )
+
+    it( "should write a log file - with path.resolve", function () {
+        var expected = strip_ansi( set_expected( "Logger test" ) ),
+            file_name = path.resolve( "./test/logs/file-1.log" )
+
+        logger( {
+            file: file_name,
+            buffer: true
+        } )
+            .write( "Logger test" )
+            .end
+            .to_file()
+
+        var actual = get_file( file_name )
+
+        assert.strictEqual( expected, actual )
+    } )
+
+    it( "should write a log file - without path.resolve", function () {
+        var expected = strip_ansi( set_expected( "Logger test" ) ),
+            file_name = "./test/logs/file-2.log"
+
+        logger( {
+            file: file_name,
+            buffer: true
+        } )
+            .write( "Logger test" )
+            .end
+            .to_file()
+
+        var actual = get_file( path.resolve( file_name ) )
+
+        assert.strictEqual( expected, actual )
+    } )
+
+    it( "should replace the file name", function () {
+        var expected = strip_ansi( set_expected( "Logger test" ) ),
+            file_name_original = "./test/logs/file-3-false.log",
+            file_name_changed = "./test/logs/file-3.log"
+
+        logger( {
+            file: file_name_original,
+            buffer: true
+        } )
+            .write( "Logger test" )
+            .end
+            .to_file( file_name_changed )
+
+        var actual = get_file( path.resolve( file_name_changed ) )
+
+        assert.strictEqual( expected, actual )
+    } )
+
+    it( "should append to the log file", function () {
+        var expected = strip_ansi( set_expected( "Logger test" ) ),
+            file_name = "./test/logs/file-4.log"
+
+        logger( {
+            file: file_name,
+            buffer: true
+        } )
+            .write( "Logger test" )
+            .end
+            .to_file()
+
+        expected += strip_ansi( set_expected( "Hello world!" ) )
+
+        logger( {
+            file: file_name,
+            buffer: true
+        } )
+            .write( "Hello world!" )
+            .end
+            .to_file()
+
+        var actual = get_file( path.resolve( file_name ) )
+
+        assert.strictEqual( expected, actual )
+    } )
+
+    it( "should write multiple files", function () {
+        var expected_1 = strip_ansi( set_expected( "Logger test" ) ),
+            expected_2 = expected_1 + "Hello world!\n",
+            file_name_1 = "./test/logs/file-5-1.log",
+            file_name_2 = "./test/logs/file-5-2.log"
+
+        logger( {
+            file: file_name_1,
+            buffer: true
+        } )
+            .write( "Logger test" )
+            .end
+            .to_file()
+            .write( "Hello world!" )
+            .end
+            .to_file( file_name_2 )
+
+        var actual_1 = get_file( path.resolve( file_name_1 ) ),
+            actual_2 = get_file( path.resolve( file_name_2 ) )
+
+        assert.strictEqual( expected_1, actual_1 )
+        assert.strictEqual( expected_2, actual_2 )
     } )
 } )

@@ -62,7 +62,7 @@ logger({
 
 Outputs provided content to the console through the logger. When the `buffer` option is set to `true`, this will be stored within the logger until either `output` or `return` are called instead.
 
-### Usage
+#### Usage
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
@@ -73,7 +73,7 @@ logger().write("hello world").end
 
 Resets all styles and outputs a new line to the console through the logger.
 
-### Usage
+#### Usage
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
@@ -84,7 +84,7 @@ logger().write("hello world").end
 
 Outputs the buffer to the console through the logger.
 
-### Usage
+#### Usage
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
@@ -95,7 +95,7 @@ logger({ buffer: true }).write("hello world").end.output
 
 Returns the buffer created by the logger, along with the ansi codes for the modifiers used.
 
-### Usage
+#### Usage
 
 ```javascript
 // Returns "hello world"

@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Security
+- Updated mocha to 8.2.1
 
 ## [1.0.0-beta.3] - 2020-11-11
 

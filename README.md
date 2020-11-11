@@ -3,7 +3,7 @@
 Bring some color to your console outputs!
 
 [![npm Version](https://img.shields.io/npm/v/@stgdp/fancy-logger?style=flat-square)](https://www.npmjs.com/package/@stgdp/fancy-logger)
-[![Build Status](https://img.shields.io/travis/stgdp/fancy-logger?style=flat-square)](https://travis-ci.org/stgdp/fancy-logger)
+[![Build Status](https://img.shields.io/travis/com/stgdp/fancy-logger?style=flat-square)](https://travis-ci.com/stgdp/fancy-logger)
 [![License](https://img.shields.io/github/license/stgdp/fancy-logger?style=flat-square)](LICENSE)
 [![Dependency Status](https://img.shields.io/david/stgdp/fancy-logger?style=flat-square)](https://david-dm.org/stgdp/fancy-logger)
 

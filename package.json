@@ -14,7 +14,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "publish": "npm publish --access public --tag beta",
+    "publish": "npm publish --access public",
     "test": "mocha"
   },
   "keywords": [],

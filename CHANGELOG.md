@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [1.0.0-beta.3] - 2020-11-11
+
+### Added
+- Implemented writing the log to a file
+
+### Changed
+- Moved the test file location to /test
+
 ## [1.0.0-beta.2] - 2020-09-14
 
 ### Added
@@ -41,7 +49,8 @@
 
 -   Initial (beta) version
 
-[unreleased]: https://github.com/stgdp/fancy-logger/compare/v1.0.0-beta.2...HEAD
+[unreleased]: https://github.com/stgdp/fancy-logger/compare/v1.0.0-beta.3...HEAD
+[1.0.0-beta.3]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.1
 [1.0.0-beta.0]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.0

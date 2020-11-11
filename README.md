@@ -26,10 +26,10 @@ yarn add @stgdp/fancy-logger
 ## Usage
 
 ```javascript
-const logger = require("@stgdp/fancy-logger")
+const logger = require("@stgdp/fancy-logger");
 
 // Produces a bold console log with a white background and red text
-logger().red.bold.bg.white.write("I'm formatted!").end
+logger().red.bold.bg.white.write("I'm formatted!").end;
 ```
 
 ## Reference
@@ -38,24 +38,30 @@ logger().red.bold.bg.white.write("I'm formatted!").end
 
 Starts the logger with a timestamp by default. Options can be supplied to the logger in an object.
 
-| Options     | Default    | Operation                                                                                                                                                     |
-| ----------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `timestamp` | `true`     | Enables the timestamp                                                                                                                                         |
-| `format`    | `HH:mm:ss` | Sets the format for the timestamp. Check out the [fecha documentation](https://github.com/taylorhakes/fecha#formatting-tokens) for the formatting characters. |
-| `buffer`    | `false`    | Buffers the output to be returned or outputted at a later time                                                                                                |
+| Options        | Default    | Operation                                                                                                                                                         |
+| -------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timestamp`    | `true`     | Enables the timestamp                                                                                                                                             |
+| `format`       | `HH:mm:ss` | Sets the format for the timestamp. Check out the [fecha documentation](https://github.com/taylorhakes/fecha#formatting-tokens) for the formatting characters.     |
+| `buffer`       | `false`    | Buffers the output to be returned or outputted at a later time                                                                                                    |
+| `file`         | `false`    | Sets a file to store the current log buffer to when `to_file` is called                                                                                           |
+| `file_options` | `{}`       | Sets the file options for the `to_file` method. Gets passed to `fs.writeFileSync`. See more: https://nodejs.org/api/fs.html#fs_fs_writefilesync_file_data_options |
 
 #### Usage
 
 ```javascript
 // Without options
-logger()
+logger();
 
 // With options
 logger({
-    timestamp: true,
-    format: "HH:mm:ss",
-    buffer: false,
-})
+  timestamp: true,
+  format: "HH:mm:ss",
+  buffer: false,
+  file: "./logs/node-app.log",
+  file_options: {
+    encoding: "utf8",
+  },
+});
 ```
 
 ### write( content: String )
@@ -66,7 +72,33 @@ Outputs provided content to the console through the logger. When the `buffer` op
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger().write("hello world").end
+logger().write("hello world").end;
+```
+
+### to_file( file: String )
+
+Writes the current log to file. Recommended to be used at the end of a log to prevent the log from being written to file twice. The `file` parameter can be left blank to use the default set in the `logger` constructor, or be set to a file location.
+
+#### Usage
+
+```javascript
+logger({
+  file: "./logs/node-app.log",
+})
+  .write("hello world")
+  .end
+  .to_file();
+// Or
+logger({
+  file: path.resolve("./logs/node-app.log"),
+})
+  .write("hello world")
+  .end
+  .to_file();
+// Or
+logger().write("hello world").end.to_file("./logs/node-app.log");
+// Or
+logger().write("hello world").end.to_file(path.resolve("./logs/node-app.log"));
 ```
 
 ### end
@@ -77,7 +109,7 @@ Resets all styles and outputs a new line to the console through the logger.
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger().write("hello world").end
+logger().write("hello world").end;
 ```
 
 ### output
@@ -88,7 +120,7 @@ Outputs the buffer to the console through the logger.
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger({ buffer: true }).write("hello world").end.output
+logger({ buffer: true }).write("hello world").end.output;
 ```
 
 ### return
@@ -99,7 +131,7 @@ Returns the buffer created by the logger, along with the ansi codes for the modi
 
 ```javascript
 // Returns "hello world"
-var msg = logger({ buffer: true }).write("hello world").end.return
+var msg = logger({ buffer: true }).write("hello world").end.return;
 ```
 
 ### Modifier types
@@ -120,27 +152,27 @@ Foreground and background modifiers allow the logger to change their foreground 
 
 #### Available modifiers
 
--   `black`
--   `red`
--   `green`
--   `yellow`
--   `blue`
--   `magenta`
--   `cyan`
--   `white`
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue`
+- `magenta`
+- `cyan`
+- `white`
 
 #### Usage
 
 ```javascript
 // Sets the logger foreground color to red
-logger().red.write("hello world").end
-logger().fg.red.write("hello world").end
+logger().red.write("hello world").end;
+logger().fg.red.write("hello world").end;
 
 // Sets the logger background color to red
-logger().bg.red.write("hello world").end
+logger().bg.red.write("hello world").end;
 
 // Sets the logger background color to bright red
-logger().bg.bright.red.write("hello world").end
+logger().bg.bright.red.write("hello world").end;
 ```
 
 ### decoration
@@ -149,23 +181,23 @@ Decoration modifiers allow the logger to change their decorations. These modifie
 
 #### Available modifiers
 
--   `bold`
--   `dim`
--   `italic`
--   `underline`
--   `inverse`
--   `hidden`
--   `strike`
--   `frame`
--   `encircle`
--   `overline`
+- `bold`
+- `dim`
+- `italic`
+- `underline`
+- `inverse`
+- `hidden`
+- `strike`
+- `frame`
+- `encircle`
+- `overline`
 
 #### Usage
 
 ```javascript
 // Sets the logger decoration to bold
-logger().bold.write("hello world").end
-logger().decoration.bold.write("hello world").end
+logger().bold.write("hello world").end;
+logger().decoration.bold.write("hello world").end;
 ```
 
 ### reset
@@ -174,29 +206,29 @@ Reset modifiers allow the logger to reset previously applied modifiers back to t
 
 #### Available modifiers
 
--   `all`
--   `bold`
--   `dim`
--   `italic`
--   `underline`
--   `inverse`
--   `hidden`
--   `strike`
--   `reset_fg`
--   `reset_bg`
--   `frame`
--   `encircle`
--   `overline`
+- `all`
+- `bold`
+- `dim`
+- `italic`
+- `underline`
+- `inverse`
+- `hidden`
+- `strike`
+- `reset_fg`
+- `reset_bg`
+- `frame`
+- `encircle`
+- `overline`
 
 #### Usage
 
 ```javascript
 // Resets all modifiers
-logger().red.bold.write("hello").all.write(" world").end
-logger().red.bold.write("hello").reset.all.write(" world").end
+logger().red.bold.write("hello").all.write(" world").end;
+logger().red.bold.write("hello").reset.all.write(" world").end;
 
 // Resets the bold modifier, leaving the foreground modifier alone
-logger().red.bold.write("hello").reset.bold.write(" world").end
+logger().red.bold.write("hello").reset.bold.write(" world").end;
 ```
 
 ## License

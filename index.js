@@ -8,20 +8,18 @@ const timestamp = require( "fecha" ).format
 class Logger {
     constructor ( options ) {
         this.stdout = process.stdout
-        this._options = Object.assign( {
-            timestamp: true,
-            format: "HH:mm:ss",
-            buffer: false,
-            file: false,
-            file_options: {}
-        }, options )
+        this._options = options
         this._output = ""
         this._modifier = ""
         this._bright = false
 
+        parse_options.call( this )
+
         if ( this._options.timestamp ) {
             write_timestamp.call( this )
         }
+
+        set_modifiers.call( this )
     }
 
     write( data ) {
@@ -56,7 +54,7 @@ class Logger {
             file = this._options.file
         }
 
-        if ( file == false ) {
+        if ( typeof file !== "string" || !file ) {
             return this
         }
 
@@ -78,6 +76,121 @@ class Logger {
     }
 }
 
+function default_options() {
+    return {
+        timestamp: true,
+        format: "HH:mm:ss",
+        buffer: false,
+        file: false,
+        file_options: {},
+        modifiers: {
+            fg: false,
+            bg: false,
+            bright: {
+                fg: false,
+                bg: false,
+            },
+            decoration: {
+                bold: false,
+                dim: false,
+                italic: false,
+                underline: false,
+                inverse: false,
+                hidden: false,
+                strike: false,
+                frame: false,
+                encircle: false,
+                overline: false,
+            }
+        }
+    }
+}
+
+function parse_options() {
+    let options = this._options
+    let parsed_options = default_options()
+
+    if ( typeof options !== "object" || !options ) {
+        this._options = parsed_options
+        return
+    }
+
+    if ( typeof options.timestamp === "boolean" ) {
+        parsed_options.timestamp = options.timestamp
+    }
+
+    if ( typeof options.format === "string" ) {
+        parsed_options.format = options.format
+    }
+
+    if ( typeof options.buffer === "boolean" ) {
+        parsed_options.buffer = options.buffer
+    }
+
+    if ( typeof options.file === "string" ) {
+        parsed_options.file = options.file
+    }
+
+    if ( typeof options.file_options === "object" && options.file_options ) {
+        parsed_options.file_options = options.file_options
+    }
+
+    parsed_options.modifiers = parse_modifiers.call( this )
+
+    this._options = parsed_options
+}
+
+function parse_modifiers() {
+    let modifiers = this._options.modifiers
+    let parsed_modifiers = default_options().modifiers
+
+    if ( typeof modifiers !== "object" || !modifiers ) {
+        return parsed_modifiers
+    }
+
+    if ( typeof modifiers.fg === "string" ) {
+        parsed_modifiers.fg = modifiers.fg
+    }
+
+    if ( typeof modifiers.bg === "string" ) {
+        parsed_modifiers.bg = modifiers.bg
+    }
+
+    if ( Array.isArray( modifiers.bright ) || ( typeof modifiers.bright === "object" && modifiers.bright ) ) {
+        if ( Array.isArray( modifiers.bright ) ) {
+            modifiers.bright.forEach( function ( item ) {
+                if ( item in parsed_modifiers.bright ) {
+                    parsed_modifiers.bright[item] = true
+                }
+            } )
+        } else {
+            for ( let item in parsed_modifiers.bright ) {
+                if ( typeof modifiers.bright[item] === "boolean" ) {
+                    parsed_modifiers.bright[item] = modifiers.bright[item]
+                }
+            }
+        }
+    }
+
+    if ( Array.isArray( modifiers.decoration ) || ( typeof modifiers.decoration === "object" && modifiers.decoration ) ) {
+        if ( Array.isArray( modifiers.decoration ) ) {
+            modifiers.decoration.forEach( function ( item ) {
+                if ( item in parsed_modifiers.decoration ) {
+                    parsed_modifiers.decoration[item] = true
+                }
+            } )
+        } else {
+            for ( let item in parsed_modifiers.decoration ) {
+                if ( typeof modifiers.decoration[item] === "boolean" ) {
+                    parsed_modifiers.decoration[item] = modifiers.decoration[item]
+                }
+            }
+        }
+    }
+
+    return parsed_modifiers
+}
+
 function write_timestamp() {
     this
         .all
@@ -86,6 +199,34 @@ function write_timestamp() {
         .write( timestamp( new Date(), this._options.format ) )
         .all
         .write( "] - " )
+}
+
+function set_modifiers() {
+    let modifiers = this._options.modifiers
+
+    if ( !!modifiers.fg ) {
+        if ( !!modifiers.bright.fg ) {
+            this.bright
+        }
+
+        this.fg[modifiers.fg]
+    }
+
+    if ( !!modifiers.bg ) {
+        if ( !!modifiers.bright.bg ) {
+            this.bright
+        }
+
+        this.bg[modifiers.bg]
+    }
+
+    let that = this
+
+    Object.keys( ansi_codes.modifier ).forEach( function( decoration ) {
+        if ( !!modifiers.decoration[decoration] ) {
+            that.decoration[decoration]
+        }
+    } )
 }
 
 function define_get( name, callback ) {
@@ -142,6 +283,8 @@ Object.keys( ansi_codes.fg ).forEach( function ( color ) {
         } else {
             this.write( ansi_codes[this._modifier][color] )
         }
+
+        this._bright = false
 
         return this
     } )

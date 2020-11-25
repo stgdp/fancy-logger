@@ -498,3 +498,57 @@ describe( "file", function () {
         assert.strictEqual( expected_2, actual_2 )
     } )
 } )
+
+describe( "default_modifiers", function () {
+    var hook
+
+    beforeEach( function () {
+        hook = captureStream( process.stdout )
+    } )
+
+    afterEach( function () {
+        hook.unhook()
+    } )
+
+    it( "should be bright red fg, yellow bg and italic - object", function () {
+        var expected = set_expected( `${ansi_codes.fg.bright.red}${ansi_codes.bg.yellow}${ansi_codes.modifier.italic}Logger test` )
+
+        logger({
+            modifiers: {
+                fg: "red",
+                bg: "yellow",
+                bright: {
+                    fg: true,
+                    bg: false
+                },
+                decoration: {
+                    bold: false,
+                    italic: true,
+                }
+            }
+        })
+            .write( "Logger test" )
+            .end
+        assert.strictEqual( hook.captured(), expected )
+    } )
+
+    it( "should be bright red fg, yellow bg and italic - array", function () {
+        var expected = set_expected( `${ansi_codes.fg.bright.red}${ansi_codes.bg.yellow}${ansi_codes.modifier.italic}Logger test` )
+
+        logger({
+            modifiers: {
+                fg: "red",
+                bg: "yellow",
+                bright: [
+                    "fg"
+                ],
+                decoration: [
+                    "italic"
+                ]
+            }
+        })
+            .write( "Logger test" )
+            .end
+        assert.strictEqual( hook.captured(), expected )
+    } )
+} )

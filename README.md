@@ -45,6 +45,7 @@ Starts the logger with a timestamp by default. Options can be supplied to the lo
 | `buffer`       | `false`    | Buffers the output to be returned or outputted at a later time                                                                                                    |
 | `file`         | `false`    | Sets a file to store the current log buffer to when `to_file` is called                                                                                           |
 | `file_options` | `{}`       | Sets the file options for the `to_file` method. Gets passed to `fs.writeFileSync`. See more: https://nodejs.org/api/fs.html#fs_fs_writefilesync_file_data_options |
+| `modifiers`    | `{}`       | Sets the default modifiers for the logger to run with. See: [Default Modifiers](#default-modifiers)                                                               |
 
 #### Usage
 
@@ -54,13 +55,13 @@ logger();
 
 // With options
 logger({
-  timestamp: true,
-  format: "HH:mm:ss",
-  buffer: false,
-  file: "./logs/node-app.log",
-  file_options: {
-    encoding: "utf8",
-  },
+    timestamp: true,
+    format: "HH:mm:ss",
+    buffer: false,
+    file: "./logs/node-app.log",
+    file_options: {
+        encoding: "utf8",
+    },
 });
 ```
 
@@ -83,18 +84,16 @@ Writes the current log to file. Recommended to be used at the end of a log to pr
 
 ```javascript
 logger({
-  file: "./logs/node-app.log",
+    file: "./logs/node-app.log",
 })
-  .write("hello world")
-  .end
-  .to_file();
+    .write("hello world")
+    .end.to_file();
 // Or
 logger({
-  file: path.resolve("./logs/node-app.log"),
+    file: path.resolve("./logs/node-app.log"),
 })
-  .write("hello world")
-  .end
-  .to_file();
+    .write("hello world")
+    .end.to_file();
 // Or
 logger().write("hello world").end.to_file("./logs/node-app.log");
 // Or
@@ -152,14 +151,14 @@ Foreground and background modifiers allow the logger to change their foreground 
 
 #### Available modifiers
 
-- `black`
-- `red`
-- `green`
-- `yellow`
-- `blue`
-- `magenta`
-- `cyan`
-- `white`
+-   `black`
+-   `red`
+-   `green`
+-   `yellow`
+-   `blue`
+-   `magenta`
+-   `cyan`
+-   `white`
 
 #### Usage
 
@@ -181,16 +180,16 @@ Decoration modifiers allow the logger to change their decorations. These modifie
 
 #### Available modifiers
 
-- `bold`
-- `dim`
-- `italic`
-- `underline`
-- `inverse`
-- `hidden`
-- `strike`
-- `frame`
-- `encircle`
-- `overline`
+-   `bold`
+-   `dim`
+-   `italic`
+-   `underline`
+-   `inverse`
+-   `hidden`
+-   `strike`
+-   `frame`
+-   `encircle`
+-   `overline`
 
 #### Usage
 
@@ -206,19 +205,19 @@ Reset modifiers allow the logger to reset previously applied modifiers back to t
 
 #### Available modifiers
 
-- `all`
-- `bold`
-- `dim`
-- `italic`
-- `underline`
-- `inverse`
-- `hidden`
-- `strike`
-- `reset_fg`
-- `reset_bg`
-- `frame`
-- `encircle`
-- `overline`
+-   `all`
+-   `bold`
+-   `dim`
+-   `italic`
+-   `underline`
+-   `inverse`
+-   `hidden`
+-   `strike`
+-   `reset_fg`
+-   `reset_bg`
+-   `frame`
+-   `encircle`
+-   `overline`
 
 #### Usage
 
@@ -229,6 +228,48 @@ logger().red.bold.write("hello").reset.all.write(" world").end;
 
 // Resets the bold modifier, leaving the foreground modifier alone
 logger().red.bold.write("hello").reset.bold.write(" world").end;
+```
+
+### Default Modifiers
+
+Default modifiers can be sent with the logger options to style the log without needing to chain modifiers. **NOTE:** You don't have to send the full object, only send what you need and leave the rest.
+
+#### Usage
+
+```javascript
+// Output will have a bright red foreground, blue background and be bold
+logger({
+    modifiers: {
+        fg: "red",
+        bg: "blue",
+        bright: {
+            fg: true,
+            bg: false,
+        },
+        decoration: {
+            bold: true,
+            dim: false,
+            italic: false,
+            underline: false,
+            inverse: false,
+            hidden: false,
+            strike: false,
+            frame: false,
+            encircle: false,
+            overline: false,
+        },
+    },
+}).write("hello world").end;
+// OR
+// Output will have a bright red foreground, blue background and be bold
+logger({
+    modifiers: {
+        fg: "red",
+        bg: "blue",
+        bright: ["fg"],
+        decoration: ["bold"],
+    },
+}).write("hello world").end;
 ```
 
 ## License

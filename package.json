@@ -17,7 +17,20 @@
     "publish": "npm publish --access public",
     "test": "mocha"
   },
-  "keywords": [],
+  "keywords": [
+    "console",
+    "log",
+    "logger",
+    "logging",
+    "modifiers",
+    "decoration"
+  ],
+  "files": [
+    "CHANGELOG.md",
+    "index.js",
+    "package.json",
+    "README.md"
+  ],
   "dependencies": {
     "@stgdp/ansi-codes": "1.0.0",
     "fecha": "^4.2.0",

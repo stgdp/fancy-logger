@@ -8,21 +8,27 @@ const timestamp = require( "fecha" ).format
 class Logger {
     constructor ( options ) {
         this.stdout = process.stdout
-        this._options = options
+        this._options = parse_options.call( this, options )
         this._output = ""
         this._modifier = ""
         this._bright = false
-
-        parse_options.call( this )
 
         if ( this._options.timestamp ) {
             write_timestamp.call( this )
         }
 
-        set_modifiers.call( this )
+        set_modifiers.call( this, this._options.modifiers )
     }
 
-    write( data ) {
+    write( data, modifiers = {} ) {
+        modifiers = parse_modifiers.call( this, modifiers, true )
+
+        set_modifiers.call( this, modifiers )
+
+        if ( Array.isArray( data ) ) {
+            data = data.join( ' ' )
+        }
+
         this._output += data
 
         if ( !this._options.buffer ) {
@@ -50,7 +56,7 @@ class Logger {
     }
 
     to_file( file = false ) {
-        if ( file == false ) {
+        if ( !file ) {
             file = this._options.file
         }
 
@@ -76,8 +82,8 @@ class Logger {
     }
 }
 
-function default_options() {
-    return {
+function default_options( reset = false ) {
+    let options = {
         timestamp: true,
         format: "HH:mm:ss",
         buffer: false,
@@ -104,15 +110,33 @@ function default_options() {
             }
         }
     }
+
+    if ( reset ) {
+        options.modifiers.reset = {
+            all: false,
+            bold: false,
+            dim: false,
+            italic: false,
+            underline: false,
+            inverse: false,
+            hidden: false,
+            strike: false,
+            reset_fg: false,
+            reset_bg: false,
+            frame: false,
+            encircle: false,
+            overline: false,
+        }
+    }
+
+    return options
 }
 
-function parse_options() {
-    let options = this._options
+function parse_options( options, reset = false ) {
     let parsed_options = default_options()
 
     if ( typeof options !== "object" || !options ) {
-        this._options = parsed_options
-        return
+        return parsed_options
     }
 
     if ( typeof options.timestamp === "boolean" ) {
@@ -135,14 +159,13 @@ function parse_options() {
         parsed_options.file_options = options.file_options
     }
 
-    parsed_options.modifiers = parse_modifiers.call( this )
+    parsed_options.modifiers = parse_modifiers.call( this, options.modifiers, reset )
 
-    this._options = parsed_options
+    return parsed_options
 }
 
-function parse_modifiers() {
-    let modifiers = this._options.modifiers
-    let parsed_modifiers = default_options().modifiers
+function parse_modifiers( modifiers, reset ) {
+    let parsed_modifiers = default_options( reset ).modifiers
 
     if ( typeof modifiers !== "object" || !modifiers ) {
         return parsed_modifiers
@@ -188,6 +211,24 @@ function parse_modifiers() {
         }
     }
 
+    if ( reset ) {
+        if ( Array.isArray( modifiers.reset ) || ( typeof modifiers.reset === "object" && modifiers.reset ) ) {
+            if ( Array.isArray( modifiers.reset ) ) {
+                modifiers.reset.forEach( function ( item ) {
+                    if ( item in parsed_modifiers.reset ) {
+                        parsed_modifiers.reset[item] = true
+                    }
+                } )
+            } else {
+                for ( let item in parsed_modifiers.reset ) {
+                    if ( typeof modifiers.reset[item] === "boolean" ) {
+                        parsed_modifiers.reset[item] = modifiers.reset[item]
+                    }
+                }
+            }
+        }
+    }
+
     return parsed_modifiers
 }
 
@@ -201,19 +242,17 @@ function write_timestamp() {
         .write( "] - " )
 }
 
-function set_modifiers() {
-    let modifiers = this._options.modifiers
-
-    if ( !!modifiers.fg ) {
-        if ( !!modifiers.bright.fg ) {
+function set_modifiers( modifiers ) {
+    if ( modifiers.fg ) {
+        if ( modifiers.bright && modifiers.bright.fg ) {
             this.bright
         }
 
         this.fg[modifiers.fg]
     }
 
-    if ( !!modifiers.bg ) {
-        if ( !!modifiers.bright.bg ) {
+    if ( modifiers.bg ) {
+        if ( modifiers.bright && modifiers.bright.bg ) {
             this.bright
         }
 
@@ -223,10 +262,22 @@ function set_modifiers() {
     let that = this
 
     Object.keys( ansi_codes.modifier ).forEach( function( decoration ) {
-        if ( !!modifiers.decoration[decoration] ) {
+        if ( modifiers.decoration[decoration] ) {
             that.decoration[decoration]
         }
     } )
+
+    if ( modifiers.reset ) {
+        Object.keys( ansi_codes.reset ).forEach( function( reset ) {
+            if ( reset == "fg" || reset == "bg" ) {
+                reset = `reset_${reset}`
+            }
+
+            if ( modifiers.reset[reset] ) {
+                that.reset[reset]
+            }
+        } )
+    }
 }
 
 function define_get( name, callback ) {

@@ -65,15 +65,20 @@ logger({
 });
 ```
 
-### write( content: String )
+### write( content: String, modifiers: Object )
 
 Outputs provided content to the console through the logger. When the `buffer` option is set to `true`, this will be stored within the logger until either `output` or `return` are called instead.
+
+`modifiers` uses the [Default Modifiers](#default-modifiers) with an additional parameter of `reset` for [reset modifiers](#reset)
 
 #### Usage
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
 logger().write("hello world").end;
+
+// Outputs "hello world" to the console with a timestamp, new line and blue "world".
+logger().write("hello ").write("world", {fg:"blue"}).end;
 ```
 
 ### to_file( file: String )

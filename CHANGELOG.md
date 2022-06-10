@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 ### Security
-- Updated mocha to 8.2.1
+- Updated `mocha` to 10.0.0
+- Updated `fecha` to 4.2.3
+- Updated `strip-ansi` to 6.0.1
+
+### Added
+- Implemented modifier options to `write` method
 
 ## [1.0.0-beta.3] - 2020-11-11
 

@@ -2,7 +2,9 @@
 
 Bring some color to your console outputs!
 
+[![GitHub release](https://img.shields.io/github/v/release/stgdp/fancy-logger?include_prereleases&style=flat-square)](https://github.com/stgdp/fancy-logger/releases/latest)
 [![npm Version](https://img.shields.io/npm/v/@stgdp/fancy-logger?style=flat-square)](https://www.npmjs.com/package/@stgdp/fancy-logger)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/stgdp/fancy-logger/Linting%20&%20testing?style=flat-square)](https://github.com/stgdp/fancy-logger/actions/workflows/lint-test.yml)
 [![License](https://img.shields.io/github/license/stgdp/fancy-logger?style=flat-square)](LICENSE)
 
 `fancy-logger` is a Node.js module that supplies you with a fully-featured console logger to format your terminal. Change the text color, background color, make the text bold, italic, underline and more.

@@ -23,7 +23,7 @@
 - Implemented default modifiers - [#4]
 
 ### Changed
-- Migrated CI to `travis-ci.com``
+- Migrated CI to `travis-ci.com`
 
 ## [1.0.0-beta.3] - 2020-11-11
 

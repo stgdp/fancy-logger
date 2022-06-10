@@ -13,9 +13,7 @@
 ### Changed
 - Refactored tests - [#6]
 - Updated shields
-
-### Removed
-- Removed `travis-ci.com`
+- Migrated from `travis-ci.com` to Github Actions
 
 ## [1.0.0-beta.4] - 2020-11-25
 

@@ -9,7 +9,9 @@ const logger = require( "../../" )
 const { get_file, set_expected } = require( "./helpers" )
 
 describe( "file", function () {
-    fs.rmdirSync( "./test/logs", { recursive: true } )
+    if ( fs.existsSync( './test/logs' ) ) {
+        fs.rmSync( "./test/logs", { recursive: true } )
+    }
 
     it( "should write a log file - with path.resolve", function () {
         var expected = strip_ansi( set_expected( "Logger test" ) ),

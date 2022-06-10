@@ -1,40 +1,42 @@
-require( "mocha" )
-const assert = require( "assert" )
+require( 'mocha' )
+const assert = require( 'assert' )
 
-const ansi_codes = require( "@stgdp/ansi-codes" )
+const ansi_codes = require( '@stgdp/ansi-codes' )
 
-const logger = require( "../../" )
-const { capture_stream, set_expected } = require( "./helpers" )
+const logger = require( '../../' )
+const { capture_stream, set_expected } = require( './helpers' )
 
-describe( "decorations", function () {
+describe( 'decorations', () => {
     let output
 
-    beforeEach( function () {
+    beforeEach( () => {
         output = capture_stream( process.stdout )
     } )
 
-    afterEach( function () {
+    afterEach( () => {
         output.unhook()
     } )
 
-    Object.keys( ansi_codes.modifier ).forEach( function ( decoration ) {
-        it( `should be ${decoration} - with decoration`, function () {
-            var expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
+    Object.keys( ansi_codes.modifier ).forEach( ( decoration ) => {
+        it( `should be ${decoration} - with decoration`, () => {
+            const expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
 
             logger()
                 .decoration[decoration]
-                .write( "Logger test" )
+                .write( 'Logger test' )
                 .end
             assert.strictEqual( output.captured(), expected )
         } )
 
-        it( `should be ${decoration} - without decoration`, function () {
-            var expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
+        it( `should be ${decoration} - without decoration`, () => {
+            const expected = set_expected( `${ansi_codes.modifier[decoration]}Logger test` )
 
+            /* eslint-disable no-unexpected-multiline */
             logger()
-            [decoration]
-                .write( "Logger test" )
+                [decoration]
+                .write( 'Logger test' )
                 .end
+            /* eslint-enable no-unexpected-multiline */
             assert.strictEqual( output.captured(), expected )
         } )
     } )

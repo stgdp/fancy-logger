@@ -14,6 +14,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "lint": "eslint **/*.js",
     "publish": "npm publish --access public",
     "test": "mocha"
   },
@@ -37,6 +38,10 @@
     "strip-ansi": "^6.0.1"
   },
   "devDependencies": {
+    "eslint": "^8.17.0",
+    "eslint-config-xo": "^0.41.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-unicorn": "^42.0.0",
     "mocha": "^10.0.0"
   }
 }

@@ -1,61 +1,63 @@
-require( "mocha" )
-const assert = require( "assert" )
+require( 'mocha' )
+const assert = require( 'assert' )
 
-const ansi_codes = require( "@stgdp/ansi-codes" )
+const ansi_codes = require( '@stgdp/ansi-codes' )
 
-const logger = require( "../../" )
-const { capture_stream, set_expected } = require( "./helpers" )
+const logger = require( '../../' )
+const { capture_stream, set_expected } = require( './helpers' )
 
-describe( "foreground", function () {
+describe( 'foreground', () => {
     let output
 
-    beforeEach( function () {
+    beforeEach( () => {
         output = capture_stream( process.stdout )
     } )
 
-    afterEach( function () {
+    afterEach( () => {
         output.unhook()
     } )
 
-    Object.keys( ansi_codes.fg ).forEach( function ( color ) {
-        if ( color != "bright" ) {
-            it( `should be ${color} - with fg`, function () {
-                var expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
+    Object.keys( ansi_codes.fg ).forEach( ( color ) => {
+        if ( color != 'bright' ) {
+            it( `should be ${color} - with fg`, () => {
+                const expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
 
                 logger()
                     .fg[color]
-                    .write( "Logger test" )
+                    .write( 'Logger test' )
                     .end
                 assert.strictEqual( output.captured(), expected )
             } )
 
-            it( `should be ${color} - without fg`, function () {
-                var expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
+            it( `should be ${color} - without fg`, () => {
+                const expected = set_expected( `${ansi_codes.fg[color]}Logger test` )
 
+                /* eslint-disable no-unexpected-multiline */
                 logger()
-                [color]
-                    .write( "Logger test" )
+                    [color]
+                    .write( 'Logger test' )
                     .end
+                /* eslint-enable no-unexpected-multiline */
                 assert.strictEqual( output.captured(), expected )
             } )
         } else {
-            Object.keys( ansi_codes.fg.bright ).forEach( function ( bright ) {
-                it( `should be bright ${bright} - with fg`, function () {
-                    var expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
+            Object.keys( ansi_codes.fg.bright ).forEach( ( bright ) => {
+                it( `should be bright ${bright} - with fg`, () => {
+                    const expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
 
                     logger()
                         .fg.bright[bright]
-                        .write( "Logger test" )
+                        .write( 'Logger test' )
                         .end
                     assert.strictEqual( output.captured(), expected )
                 } )
 
-                it( `should be bright ${bright} - without fg`, function () {
-                    var expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
+                it( `should be bright ${bright} - without fg`, () => {
+                    const expected = set_expected( `${ansi_codes.fg.bright[bright]}Logger test` )
 
                     logger()
                         .bright[bright]
-                        .write( "Logger test" )
+                        .write( 'Logger test' )
                         .end
                     assert.strictEqual( output.captured(), expected )
                 } )

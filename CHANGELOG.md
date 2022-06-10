@@ -8,6 +8,7 @@
 
 ### Added
 - Implemented modifier options to `write` method
+- Implemented linting for improved coding standards
 
 ## [1.0.0-beta.3] - 2020-11-11
 

@@ -1,30 +1,30 @@
-require( "mocha" )
-const assert = require( "assert" )
+require( 'mocha' )
+const assert = require( 'assert' )
 
-const ansi_codes = require( "@stgdp/ansi-codes" )
+const ansi_codes = require( '@stgdp/ansi-codes' )
 
-const logger = require( "../../" )
-const { capture_stream, set_expected } = require( "./helpers" )
+const logger = require( '../../' )
+const { capture_stream, set_expected } = require( './helpers' )
 
-describe( "chaining", function () {
+describe( 'chaining', () => {
     let output
 
-    beforeEach( function () {
+    beforeEach( () => {
         output = capture_stream( process.stdout )
     } )
 
-    afterEach( function () {
+    afterEach( () => {
         output.unhook()
     } )
 
-    it( "should be bold, blue fg and yellow bg", function () {
-        var expected = set_expected( `${ansi_codes.modifier.bold}${ansi_codes.fg.blue}${ansi_codes.bg.yellow}Logger test` )
+    it( 'should be bold, blue fg and yellow bg', () => {
+        const expected = set_expected( `${ansi_codes.modifier.bold}${ansi_codes.fg.blue}${ansi_codes.bg.yellow}Logger test` )
 
         logger()
             .bold
             .blue
             .bg.yellow
-            .write( "Logger test" )
+            .write( 'Logger test' )
             .end
         assert.strictEqual( output.captured(), expected )
     } )

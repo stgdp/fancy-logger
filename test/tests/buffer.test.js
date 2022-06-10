@@ -1,66 +1,66 @@
-require( "mocha" )
-const assert = require( "assert" )
+require( 'mocha' )
+const assert = require( 'assert' )
 
-const logger = require( "../../" )
-const { capture_stream, set_expected } = require( "./helpers" )
+const logger = require( '../../' )
+const { capture_stream, set_expected } = require( './helpers' )
 
-describe( "buffer", function () {
+describe( 'buffer', () => {
     let output
 
-    beforeEach( function () {
+    beforeEach( () => {
         output = capture_stream( process.stdout )
     } )
 
-    afterEach( function () {
+    afterEach( () => {
         output.unhook()
     } )
 
-    it( "should enable output - no option", function () {
-        var expected = set_expected( "Logger test" )
+    it( 'should enable output - no option', () => {
+        const expected = set_expected( 'Logger test' )
 
         logger()
-            .write( "Logger test" )
+            .write( 'Logger test' )
             .end
         assert.strictEqual( output.captured(), expected )
     } )
 
-    it( "should enable output - with option", function () {
-        var expected = set_expected( "Logger test" )
+    it( 'should enable output - with option', () => {
+        const expected = set_expected( 'Logger test' )
 
         logger( { buffer: false } )
-            .write( "Logger test" )
+            .write( 'Logger test' )
             .end
         assert.strictEqual( output.captured(), expected )
     } )
 
-    it( "should disable output", function () {
-        var expected = set_expected( "Logger test" )
+    it( 'should disable output', () => {
+        const expected = set_expected( 'Logger test' )
 
         logger( { buffer: true } )
-            .write( "Logger test" )
+            .write( 'Logger test' )
             .end
         assert.notStrictEqual( output.captured(), expected )
     } )
 
-    it( "should return output", function () {
-        var expected = set_expected( "Logger test" )
+    it( 'should return output', () => {
+        const expected = set_expected( 'Logger test' )
 
-        var actual = logger( { buffer: true } )
-            .write( "Logger test" )
+        const actual = logger( { buffer: true } )
+            .write( 'Logger test' )
             .end
             .return
         assert.strictEqual( actual, expected )
         assert.notStrictEqual( output.captured(), expected )
     } )
 
-    it( "should output part, return all", function () {
-        var expected_output = set_expected( "Logger", "HH:mm:ss", false )
-        var expected_return = set_expected( "Logger test" )
+    it( 'should output part, return all', () => {
+        const expected_output = set_expected( 'Logger', 'HH:mm:ss', false )
+        const expected_return = set_expected( 'Logger test' )
 
-        var actual = logger( { buffer: true } )
-            .write( "Logger" )
+        const actual = logger( { buffer: true } )
+            .write( 'Logger' )
             .output
-            .write( " test" )
+            .write( ' test' )
             .end
             .return
         assert.strictEqual( output.captured(), expected_output )

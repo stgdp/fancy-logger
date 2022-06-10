@@ -1,42 +1,43 @@
-const fs = require( "fs" )
-const ansi_codes = require( "@stgdp/ansi-codes" )
-const fecha = require( "fecha" ).format
+const fs = require( 'fs' )
+const ansi_codes = require( '@stgdp/ansi-codes' )
+const fecha = require( 'fecha' ).format
 
 function capture_stream( stream ) {
-    var originalWrite = stream.write
-    var buffer = ""
+    const originalWrite = stream.write
+    let buffer = ''
 
-    stream.write = function ( chunk ) {
+    stream.write = function( chunk ) {
         buffer += chunk.toString()
+        // eslint-disable-next-line prefer-rest-params
         originalWrite.apply( stream, arguments )
     }
 
     return {
-        unhook: function () {
+        unhook() {
             stream.write = originalWrite
         },
-        reset: function () {
+        reset() {
             stream.write = originalWrite
             return capture_stream( stream )
         },
-        captured: function () {
+        captured() {
             return buffer
-        }
+        },
     }
 }
 
 exports.capture_stream = capture_stream
 
-function get_timestamp( format = "HH:mm:ss" ) {
+function get_timestamp( format = 'HH:mm:ss' ) {
     return `${ansi_codes.reset.all}[${ansi_codes.fg.bright.black}${fecha( new Date(), format )}${ansi_codes.reset.all}] - `
 }
 
 exports.get_timestamp = get_timestamp
 
-function set_expected( content = "", timestamp = "HH:mm:ss", end = true ) {
-    var expected = ""
+function set_expected( content = '', timestamp = 'HH:mm:ss', end = true ) {
+    let expected = ''
 
-    if ( typeof timestamp === "string" ) {
+    if ( typeof timestamp === 'string' ) {
         expected += get_timestamp( timestamp )
     }
 
@@ -44,7 +45,7 @@ function set_expected( content = "", timestamp = "HH:mm:ss", end = true ) {
 
     if ( end ) {
         expected += ansi_codes.reset.all
-        expected += "\n"
+        expected += '\n'
     }
 
     return expected
@@ -53,7 +54,7 @@ function set_expected( content = "", timestamp = "HH:mm:ss", end = true ) {
 exports.set_expected = set_expected
 
 function get_file( name ) {
-    return fs.readFileSync( name, { encoding: "utf8" } )
+    return fs.readFileSync( name, { encoding: 'utf8' } )
 }
 
 exports.get_file = get_file

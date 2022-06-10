@@ -11,7 +11,7 @@
 - Implemented linting for improved coding standards
 
 ### Changed
-- Refactored tests - #6
+- Refactored tests - [#6]
 
 ## [1.0.0-beta.4] - 2020-11-25
 
@@ -19,7 +19,7 @@
 - Updated `mocha` to 8.2.1
 
 ### Added
-- Implemented default modifiers - #4
+- Implemented default modifiers - [#4]
 
 ### Changed
 - Migrated CI to `travis-ci.com``
@@ -27,7 +27,7 @@
 ## [1.0.0-beta.3] - 2020-11-11
 
 ### Added
-- Implemented writing the log to a file - #2 #3
+- Implemented writing the log to a file - [#2] [#3]
 
 ### Changed
 - Moved the test file location to /test
@@ -73,3 +73,8 @@
 [1.0.0-beta.2]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.1
 [1.0.0-beta.0]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.0
+
+[#6]: https://github.com/stgdp/fancy-logger/issues/6
+[#4]: https://github.com/stgdp/fancy-logger/issues/4
+[#3]: https://github.com/stgdp/fancy-logger/issues/3
+[#2]: https://github.com/stgdp/fancy-logger/issues/2

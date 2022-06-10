@@ -6,7 +6,7 @@ const ansi_codes = require( '@stgdp/ansi-codes' )
 const logger = require( '../../' )
 const { capture_stream, set_expected } = require( './helpers' )
 
-describe( 'background', () => {
+describe( 'Background modifiers', () => {
     let output
 
     beforeEach( () => {

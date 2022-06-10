@@ -8,7 +8,7 @@ const strip_ansi = require( 'strip-ansi' )
 const logger = require( '../../' )
 const { get_file, set_expected } = require( './helpers' )
 
-describe( 'file', () => {
+describe( 'Log file', () => {
     if ( fs.existsSync( './test/logs' ) ) {
         fs.rmSync( './test/logs', { recursive: true } )
     }

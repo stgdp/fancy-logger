@@ -4,7 +4,7 @@ const assert = require( 'assert' )
 const logger = require( '../../' )
 const { capture_stream, set_expected } = require( './helpers' )
 
-describe( 'buffer', () => {
+describe( 'Buffer', () => {
     let output
 
     beforeEach( () => {

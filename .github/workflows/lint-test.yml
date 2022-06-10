@@ -4,12 +4,17 @@ on:
   push:
   pull_request:
 
-env:
-  NODE: 14
-
 jobs:
   lint:
+    name: Lint with eslint - Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 16
+          - 14
+          - 12
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
@@ -17,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "${{ env.NODE }}"
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm ci
@@ -25,19 +30,27 @@ jobs:
       - name: Lint JS with eslint
         run: npm run lint
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v2
+  # test:
+  #   name: Test with mocha - Node.js ${{ matrix.node-version }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node-version:
+  #         - 16
+  #         - 14
+  #         - 12
+  #   steps:
+  #     - name: Clone repository
+  #       uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "${{ env.NODE }}"
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: npm ci
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Test JS with mocha
-        run: npm test
+  #     - name: Test JS with mocha
+  #       run: npm test

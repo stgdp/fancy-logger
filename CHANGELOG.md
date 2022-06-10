@@ -14,6 +14,9 @@
 - Refactored tests - [#6]
 - Updated shields
 
+### Removed
+- Removed `travis-ci.com`
+
 ## [1.0.0-beta.4] - 2020-11-25
 
 ### Security

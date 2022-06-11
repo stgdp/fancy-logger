@@ -26,10 +26,28 @@ yarn add @stgdp/fancy-logger
 ## Usage
 
 ```javascript
-const logger = require("@stgdp/fancy-logger");
+const logger = require( '@stgdp/fancy-logger' )
 
 // Produces a bold console log with a white background and red text
-logger().red.bold.bg.white.write("I'm formatted!").end;
+logger()
+    .red
+    .bold
+    .bg
+    .white
+    .write( 'I\'m formatted!' )
+    .end
+// OR
+logger( {
+    modifiers: {
+        fg: 'red',
+        bg: 'white',
+        decoration: {
+            bold: true,
+        },
+    },
+} )
+    .write( 'I\'m formatted!' )
+    .end
 ```
 
 ## Reference
@@ -51,18 +69,18 @@ Starts the logger with a timestamp by default. Options can be supplied to the lo
 
 ```javascript
 // Without options
-logger();
+logger()
 
 // With options
-logger({
+logger( {
     timestamp: true,
-    format: "HH:mm:ss",
+    format: 'HH:mm:ss',
     buffer: false,
-    file: "./logs/node-app.log",
+    file: './logs/node-app.log',
     file_options: {
-        encoding: "utf8",
+        encoding: 'utf8',
     },
-});
+} )
 ```
 
 ### write( content: String, modifiers: Object )
@@ -75,10 +93,17 @@ Outputs provided content to the console through the logger. When the `buffer` op
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger().write("hello world").end;
+logger()
+    .write( 'hello world' )
+    .end
 
 // Outputs "hello world" to the console with a timestamp, new line and blue "world".
-logger().write("hello ").write("world", {fg:"blue"}).end;
+logger()
+    .write( 'hello ' )
+    .write( 'world', {
+        fg: 'blue',
+    } )
+    .end
 ```
 
 ### to_file( file: String )
@@ -88,21 +113,29 @@ Writes the current log to file. Recommended to be used at the end of a log to pr
 #### Usage
 
 ```javascript
-logger({
-    file: "./logs/node-app.log",
-})
-    .write("hello world")
-    .end.to_file();
-// Or
-logger({
-    file: path.resolve("./logs/node-app.log"),
-})
-    .write("hello world")
-    .end.to_file();
-// Or
-logger().write("hello world").end.to_file("./logs/node-app.log");
-// Or
-logger().write("hello world").end.to_file(path.resolve("./logs/node-app.log"));
+logger( {
+    file: './logs/node-app.log',
+} )
+    .write( 'hello world' )
+    .end
+    .to_file()
+// OR
+logger( {
+    file: path.resolve( './logs/node-app.log' ),
+} )
+    .write( 'hello world' )
+    .end
+    .to_file()
+// OR
+logger()
+    .write( 'hello world' )
+    .end
+    .to_file( './logs/node-app.log' )
+// OR
+logger()
+    .write( 'hello world' )
+    .end
+    .to_file( path.resolve( './logs/node-app.log' ) )
 ```
 
 ### end
@@ -113,7 +146,9 @@ Resets all styles and outputs a new line to the console through the logger.
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger().write("hello world").end;
+logger()
+    .write( 'hello world' )
+    .end
 ```
 
 ### output
@@ -124,7 +159,12 @@ Outputs the buffer to the console through the logger.
 
 ```javascript
 // Outputs "hello world" to the console with a timestamp and new line.
-logger({ buffer: true }).write("hello world").end.output;
+logger( {
+    buffer: true,
+} )
+    .write( 'hello world' )
+    .end
+    .output
 ```
 
 ### return
@@ -135,7 +175,12 @@ Returns the buffer created by the logger, along with the ansi codes for the modi
 
 ```javascript
 // Returns "hello world"
-var msg = logger({ buffer: true }).write("hello world").end.return;
+var msg = logger( {
+    buffer: true,
+} )
+    .write( 'hello world' )
+    .end
+    .return
 ```
 
 ### Modifier types
@@ -169,14 +214,30 @@ Foreground and background modifiers allow the logger to change their foreground 
 
 ```javascript
 // Sets the logger foreground color to red
-logger().red.write("hello world").end;
-logger().fg.red.write("hello world").end;
+logger()
+    .red
+    .write( 'hello world' )
+    .end
+logger()
+    .fg
+    .red
+    .write( 'hello world' )
+    .end
 
 // Sets the logger background color to red
-logger().bg.red.write("hello world").end;
+logger()
+    .bg
+    .red
+    .write( 'hello world' )
+    .end
 
 // Sets the logger background color to bright red
-logger().bg.bright.red.write("hello world").end;
+logger()
+    .bg
+    .bright
+    .red
+    .write( 'hello world' )
+    .end
 ```
 
 ### decoration
@@ -200,8 +261,15 @@ Decoration modifiers allow the logger to change their decorations. These modifie
 
 ```javascript
 // Sets the logger decoration to bold
-logger().bold.write("hello world").end;
-logger().decoration.bold.write("hello world").end;
+logger()
+    .bold
+    .write( 'hello world' )
+    .end
+logger()
+    .decoration
+    .bold
+    .write( 'hello world' )
+    .end
 ```
 
 ### reset
@@ -228,11 +296,30 @@ Reset modifiers allow the logger to reset previously applied modifiers back to t
 
 ```javascript
 // Resets all modifiers
-logger().red.bold.write("hello").all.write(" world").end;
-logger().red.bold.write("hello").reset.all.write(" world").end;
+logger()
+    .red
+    .bold
+    .write( 'hello' )
+    .all
+    .write( ' world' ).end
+logger()
+    .red
+    .bold
+    .write( 'hello')
+    .reset
+    .all
+    .write(' world')
+    .end
 
 // Resets the bold modifier, leaving the foreground modifier alone
-logger().red.bold.write("hello").reset.bold.write(" world").end;
+logger()
+    .red
+    .bold
+    .write( 'hello')
+    .reset
+    .bold
+    .write(' world')
+    .end
 ```
 
 ### Default Modifiers
@@ -243,10 +330,10 @@ Default modifiers can be sent with the logger options to style the log without n
 
 ```javascript
 // Output will have a bright red foreground, blue background and be bold
-logger({
+logger( {
     modifiers: {
-        fg: "red",
-        bg: "blue",
+        fg: 'red',
+        bg: 'blue',
         bright: {
             fg: true,
             bg: false,
@@ -264,17 +351,20 @@ logger({
             overline: false,
         },
     },
-}).write("hello world").end;
+} )
+    .write( 'hello world' )
+    .end
 // OR
-// Output will have a bright red foreground, blue background and be bold
-logger({
+logger( {
     modifiers: {
-        fg: "red",
-        bg: "blue",
-        bright: ["fg"],
-        decoration: ["bold"],
+        fg: 'red',
+        bg: 'blue',
+        bright: ['fg'],
+        decoration: ['bold'],
     },
-}).write("hello world").end;
+} )
+    .write( 'hello world' )
+    .end
 ```
 
 ## License

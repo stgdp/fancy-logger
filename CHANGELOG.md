@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0]
 ### Security
 - Updated `mocha` to 10.0.0
 - Updated `fecha` to 4.2.3
@@ -70,7 +70,7 @@
 ### Added
 -   Initial (beta) version
 
-[unreleased]: https://github.com/stgdp/fancy-logger/compare/v1.0.0-beta.4...HEAD
+[1.0.0]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0
 [1.0.0-beta.4]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.4
 [1.0.0-beta.3]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/stgdp/fancy-logger/releases/tag/v1.0.0-beta.2

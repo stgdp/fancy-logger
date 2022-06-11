@@ -1,11 +1,95 @@
+// Core dependencies
 const fs = require( 'fs' )
 const path = require( 'path' )
 
+// External dependencies
 const ansi_codes = require( '@stgdp/ansi-codes' )
 const strip_ansi = require( 'strip-ansi' )
 const timestamp = require( 'fecha' ).format
 
+/**
+ * Logger default options
+ * @typedef {object} LoggerDefaultOptions
+ * @property {boolean} timestamp - Enables the timestamp
+ * @property {string} format - Sets the format for the timestamp
+ * @property {boolean} buffer - Buffers the output to be returned or outputted at a later
+ * @property {boolean|string} file - Sets a file to store the current log buffer to when `to_file` is called
+ * @property {object} file_options - Sets the file options for the `to_file` method. Gets passed to `fs.writeFileSync`
+ * @property {object} modifiers - Sets the default modifiers for the logger to run with
+ * @property {boolean|string} modifiers.fg - The foreground color for the logger
+ * @property {boolean|string} modifiers.bg - The background color for the logger
+ * @property {object} modifiers.bright - The brightness options for the foreground and background
+ * @property {boolean} modifiers.bright.fg - Whether the foreground should be bright
+ * @property {boolean} modifiers.bright.bg - Whether the foreground should be bright
+ * @property {object} modifiers.decoration - The decoration options for the logger
+ * @property {boolean} modifiers.decoration.bold - Sets the logger to be bold
+ * @property {boolean} modifiers.decoration.bold - Sets the logger to be bold
+ * @property {boolean} modifiers.decoration.dim - Sets the logger to be dim
+ * @property {boolean} modifiers.decoration.italic - Sets the logger to be italic
+ * @property {boolean} modifiers.decoration.underline - Sets the logger to be underline
+ * @property {boolean} modifiers.decoration.inverse - Sets the logger to be inverse
+ * @property {boolean} modifiers.decoration.hidden - Sets the logger to be hidden
+ * @property {boolean} modifiers.decoration.strike - Sets the logger to be strike
+ * @property {boolean} modifiers.decoration.frame - Sets the logger to be frame
+ * @property {boolean} modifiers.decoration.encircle - Sets the logger to be encircle
+ * @property {boolean} modifiers.decoration.overline - Sets the logger to be overline
+ */
+
+/**
+ * Logger default options w/ reset options
+ * @typedef {object} LoggerDefaultOptionsReset
+ * @property {boolean} timestamp - Enables the timestamp
+ * @property {string} format - Sets the format for the timestamp
+ * @property {boolean} buffer - Buffers the output to be returned or outputted at a later
+ * @property {boolean|string} file - Sets a file to store the current log buffer to when `to_file` is called
+ * @property {object} file_options - Sets the file options for the `to_file` method. Gets passed to `fs.writeFileSync`
+ * @property {object} modifiers - Sets the default modifiers for the logger to run with
+ * @property {boolean|string} modifiers.fg - The foreground color for the logger
+ * @property {boolean|string} modifiers.bg - The background color for the logger
+ * @property {object} modifiers.bright - The brightness options for the foreground and background
+ * @property {boolean} modifiers.bright.fg - Whether the foreground should be bright
+ * @property {boolean} modifiers.bright.bg - Whether the foreground should be bright
+ * @property {object} modifiers.decoration - The decoration options for the logger
+ * @property {boolean} modifiers.decoration.bold - Sets the logger to be bold
+ * @property {boolean} modifiers.decoration.bold - Sets the logger to be bold
+ * @property {boolean} modifiers.decoration.dim - Sets the logger to be dim
+ * @property {boolean} modifiers.decoration.italic - Sets the logger to be italic
+ * @property {boolean} modifiers.decoration.underline - Sets the logger to be underline
+ * @property {boolean} modifiers.decoration.inverse - Sets the logger to be inverse
+ * @property {boolean} modifiers.decoration.hidden - Sets the logger to be hidden
+ * @property {boolean} modifiers.decoration.strike - Sets the logger to be strike
+ * @property {boolean} modifiers.decoration.frame - Sets the logger to be frame
+ * @property {boolean} modifiers.decoration.encircle - Sets the logger to be encircle
+ * @property {boolean} modifiers.decoration.overline - Sets the logger to be overline
+ * @property {object} modifiers.reset - The reset options for the logger
+ * @property {boolean} modifiers.reset.all - Resets the modifiers in the logger
+ * @property {boolean} modifiers.reset.bold - Resets the bold decoration in the logger
+ * @property {boolean} modifiers.reset.dim - Resets the dim decoration in the logger
+ * @property {boolean} modifiers.reset.italic - Resets the italic decoration in the logger
+ * @property {boolean} modifiers.reset.underline - Resets the underline decoration in the logger
+ * @property {boolean} modifiers.reset.inverse - Resets the inverse decoration in the logger
+ * @property {boolean} modifiers.reset.hidden - Resets the hidden decoration in the logger
+ * @property {boolean} modifiers.reset.strike - Resets the strike decoration in the logger
+ * @property {boolean} modifiers.reset.reset_fg - Resets the foreground modifier in the logger
+ * @property {boolean} modifiers.reset.reset_bg - Resets the background modifier in the logger
+ * @property {boolean} modifiers.reset.frame - Resets the frame decoration in the logger
+ * @property {boolean} modifiers.reset.encircle - Resets the encircle decoration in the logger
+ * @property {boolean} modifiers.reset.overline - Resets the overline decoration in the logger
+ */
+
+/**
+ * Class representing the logger
+ * @property {object} stdout - Reference to `process.stdout`
+ * @property {object} _options - The parsed logger options
+ * @property {string} _output - The output, stored to a string
+ * @property {string} _modifier - The modifier type to apply
+ * @property {boolean} _bright - Whether the foreground/background should be bright
+ */
 class Logger {
+    /**
+     * Create a logger instance
+     * @param {LoggerDefaultOptions} options - The logger options
+     */
     constructor( options ) {
         this.stdout = process.stdout
         this._options = parse_options.call( this, options )
@@ -20,11 +104,18 @@ class Logger {
         set_modifiers.call( this, this._options.modifiers )
     }
 
+    /**
+     * Outputs provided content
+     * @param {string|string[]} data - The content to write out
+     * @param {object} modifiers - Modifiers to set for the logger. See https://github.com/stgdp/fancy-logger#default-modifiers and https://github.com/stgdp/fancy-logger#reset
+     * @returns {Logger}
+     */
     write( data, modifiers = {} ) {
+        // Parse & output any set modifiers
         modifiers = parse_modifiers.call( this, modifiers, true )
-
         set_modifiers.call( this, modifiers )
 
+        // Joins array to string for output
         if ( Array.isArray( data ) ) {
             data = data.join( ' ' )
         }
@@ -38,11 +129,19 @@ class Logger {
         return this
     }
 
+    /**
+     * Resets the modifiers and writes a newline
+     * @returns {Logger}
+     */
     get end() {
         this.all.write( '\n' )
         return this
     }
 
+    /**
+     * Outputs the buffer to file if the buffer is enabled
+     * @returns {Logger}
+     */
     get output() {
         if ( this._options.buffer ) {
             this.stdout.write( this._output )
@@ -51,10 +150,19 @@ class Logger {
         return this
     }
 
+    /**
+     * Returns the logger output
+     * @returns {string}
+     */
     get return() {
         return this._output
     }
 
+    /**
+     * Write the output to a file
+     * @param {string} file - The location to save the file
+     * @returns {Logger}
+     */
     to_file( file = false ) {
         if ( !file ) {
             file = this._options.file
@@ -73,12 +181,21 @@ class Logger {
         return this
     }
 
+    /**
+     * Sets the foreground/background modifier to be bright
+     * @return {Logger}
+     */
     get bright() {
         this._bright = !this._bright
         return this
     }
 }
 
+/**
+ * Returns the default options for the logger
+ * @param {boolean} reset - Adds the reset options to the default options
+ * @returns {LoggerDefaultOptions|LoggerDefaultOptionsReset}
+ */
 function default_options( reset = false ) {
     let options = {
         timestamp: true,
@@ -129,6 +246,12 @@ function default_options( reset = false ) {
     return options
 }
 
+/**
+ * Parses the options supplied with the default options
+ * @param {LoggerDefaultOptions|LoggerDefaultOptionsReset} options - The options to be parsed
+ * @param {boolean} reset - Whether to parse the reset options
+ * @returns {LoggerDefaultOptions|LoggerDefaultOptionsReset}
+ */
 function parse_options( options, reset = false ) {
     let parsed_options = default_options()
 
@@ -161,6 +284,12 @@ function parse_options( options, reset = false ) {
     return parsed_options
 }
 
+/**
+ * Parses the modifier supplied with the default options
+ * @param {LoggerDefaultOptions.modifiers|LoggerDefaultOptionsReset.modifiers} modifiers - The modifiers to be parsed
+ * @param {boolean} reset - Whether to parse the reset options
+ * @returns {LoggerDefaultOptions.modifiers|LoggerDefaultOptionsReset.modifiers}
+ */
 function parse_modifiers( modifiers, reset ) {
     let parsed_modifiers = default_options( reset ).modifiers
 
@@ -227,16 +356,30 @@ function parse_modifiers( modifiers, reset ) {
     return parsed_modifiers
 }
 
+/**
+ * Writes the timestamp to the logger
+ */
 function write_timestamp() {
     this
         .all
         .write( '[' )
-        .fg.bright.black
-        .write( timestamp( new Date(), this._options.format ) )
-        .all
-        .write( '] - ' )
+        .write( timestamp( new Date(), this._options.format ), {
+            fg: 'black',
+            bright: {
+                fg: true,
+            },
+        } )
+        .write( '] - ', {
+            reset: {
+                all: true
+            }
+        } )
 }
 
+/**
+ * Sets the modifiers in the logger
+ * @param {LoggerDefaultOptions.modifiers|LoggerDefaultOptionsReset.modifiers} modifiers - The modifiers to set
+ */
 function set_modifiers( modifiers ) {
     if ( modifiers.fg ) {
         if ( modifiers.bright && modifiers.bright.fg ) {
@@ -275,6 +418,12 @@ function set_modifiers( modifiers ) {
     }
 }
 
+/**
+ * Defines a getter method on the Logger
+ * @param {string} name - The name of the getter
+ * @param {function} callback - The callback for the getter
+ * @returns {null}
+ */
 function define_get( name, callback ) {
     if ( name === null || typeof name !== 'string' ) {
         return
@@ -289,6 +438,11 @@ function define_get( name, callback ) {
     } )
 }
 
+/**
+ * Writes the output to a file
+ * @async
+ * @param {string} file - The location to save the file
+ */
 async function write_file( file ) {
     fs.mkdirSync( path.dirname( file ), {
         recursive: true,
@@ -301,6 +455,9 @@ async function write_file( file ) {
     await fs.writeFileSync( path.resolve( file ), strip_ansi( this._output ), file_options )
 }
 
+/**
+ * Defines the foreground, background, decoration and reset getters
+ */
 ['fg', 'bg', 'modifier', 'reset'].forEach( ( area ) => {
     let name = area
 
@@ -314,6 +471,10 @@ async function write_file( file ) {
     } )
 } )
 
+/**
+ * Loops through the foreground colors and sets the getters for them
+ * Sets both foreground & background color getters
+ */
 Object.keys( ansi_codes.fg ).forEach( ( color ) => {
     if ( color == 'bright' ) {
         return
@@ -336,6 +497,10 @@ Object.keys( ansi_codes.fg ).forEach( ( color ) => {
     } )
 } )
 
+/**
+ * Loops through the reset modifiers and sets the getters for them
+ * Sets both decoration & reset modifier getters
+ */
 Object.keys( ansi_codes.reset ).forEach( ( decoration ) => {
     if ( decoration == 'fg' || decoration == 'bg' || decoration == 'all' ) {
         let name = decoration

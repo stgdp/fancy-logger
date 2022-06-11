@@ -9,6 +9,7 @@
 ### Added
 - Implemented modifier options to `write` method
 - Implemented linting for improved coding standards
+- Commented code for easier understanding
 
 ### Changed
 - Refactored tests - [#6]
